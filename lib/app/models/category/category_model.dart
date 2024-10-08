@@ -1,40 +1,39 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:isar/isar.dart';
-
-part 'category_model.g.dart';
-
-@collection
 class CategoryModel {
-  Id? id;
-
+  int? id;
   String name;
-
-  double price;
-
+  double? price;
+  int? quantity;
   bool sync;
-
+  bool fixedQuantity;
+  bool fixedPrice;
   String? remoteId;
-
-  DateTime? updatedAt;
+  String? nameDiacritics;
   CategoryModel({
     this.id,
     required this.name,
-    required this.price,
+    this.price,
+    this.quantity,
     required this.sync,
+    required this.fixedQuantity,
+    required this.fixedPrice,
     this.remoteId,
-    this.updatedAt,
+    this.nameDiacritics,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'name': name,
+      'name_diacritics': nameDiacritics,
       'price': price,
-      'sync': sync,
-      'remoteId': remoteId,
-      'updatedAt': updatedAt?.toIso8601String(),
+      'sync': sync ? 1 : 0,
+      'quantity': quantity,
+      'fixed_quantity': fixedQuantity ? 1 : 0,
+      'fixed_price': fixedPrice ? 1 : 0,
+      'remote_id': remoteId,
     };
   }
 
@@ -42,11 +41,13 @@ class CategoryModel {
     return CategoryModel(
       id: map['id'],
       name: map['name'] as String,
-      price: map['price'] as double,
-      sync: map['sync'] as bool,
-      remoteId: map['remoteId'] != null ? map['remoteId'] as String : null,
-      updatedAt:
-          map['updatedAt'] != null ? DateTime.parse(map['updatedAt']) : null,
+      nameDiacritics: map['name_diacritics'] as String,
+      price: map['price'] != null ? map['price'] as double : null,
+      quantity: map['quantity'] != null ? map['quantity'] as int : null,
+      sync: map['sync'] as int == 0 ? false : true,
+      fixedQuantity: map['fixed_quantity'] as int == 0 ? false : true,
+      fixedPrice: map['fixed_price'] as int == 0 ? false : true,
+      remoteId: map['remote_id'] != null ? map['remote_id'] as String : null,
     );
   }
 

@@ -1,4 +1,4 @@
-import 'package:ceeb_app/app/models/node/note_model.dart';
+import 'package:ceeb_app/app/models/note/note_model.dart';
 import 'package:ceeb_app/app/repositories/note/note_repository.dart';
 
 import './note_service.dart';
@@ -17,5 +17,10 @@ class NoteServiceImpl implements NoteService {
   @override
   Future<void> save(NoteModel note) async {
     await _noteRepository.save(note);
+  }
+
+  @override
+  Future<void> update(NoteModel note) async {
+    await _noteRepository.update(note);
   }
 }

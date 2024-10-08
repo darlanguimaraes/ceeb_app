@@ -7,6 +7,7 @@ import 'package:ceeb_app/app/modules/invoice/invoice_module.dart';
 import 'package:ceeb_app/app/modules/leading/leading_module.dart';
 import 'package:ceeb_app/app/modules/note/note_module.dart';
 import 'package:ceeb_app/app/modules/reader/reader_module.dart';
+import 'package:ceeb_app/app/modules/synchronize/synchronize_module.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -18,6 +19,16 @@ class AppWidget extends StatefulWidget {
 }
 
 class _AppWidgetState extends State<AppWidget> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,6 +51,7 @@ class _AppWidgetState extends State<AppWidget> {
         ...InvoiceModule().routers,
         ...LeadingModule().routers,
         ...NoteModule().routers,
+        ...SynchronizeModule().routers,
       },
       home: const HomePage(),
     );

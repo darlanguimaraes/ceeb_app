@@ -21,7 +21,7 @@ class UiConfig {
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xff33A2FF),
             foregroundColor: Colors.white,
-            elevation: 10,
+            elevation: 5,
             textStyle: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

@@ -16,7 +16,7 @@ class BookModule extends CeebModule {
           bindings: [
             Provider<BookRepository>(
               create: (context) =>
-                  BookRepositoryImpl(isarHelper: context.read()),
+                  BookRepositoryImpl(sqliteConnectionFactory: context.read()),
             ),
             Provider<BookService>(
               create: (context) =>

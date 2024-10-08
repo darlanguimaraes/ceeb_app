@@ -7,6 +7,7 @@ import 'package:ceeb_app/app/modules/book/form/cubit/book_form_cubit.dart';
 import 'package:ceeb_app/app/modules/book/form/cubit/book_form_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:validatorless/validatorless.dart';
 
 class BookFormPage extends StatefulWidget {
@@ -61,7 +62,6 @@ class _BookFormPageState extends BaseState<BookFormPage, BookFormCubit> {
         code: _codeEC.text,
         borrow: _borrow,
         sync: false,
-        updatedAt: DateTime.now(),
       );
       controller.save(book);
     }
@@ -69,6 +69,10 @@ class _BookFormPageState extends BaseState<BookFormPage, BookFormCubit> {
 
   @override
   Widget build(BuildContext context) {
+    final codeMask = MaskTextInputFormatter(
+      mask: '#AA## - AA.##',
+    );
+
     return BlocListener<BookFormCubit, BookFormState>(
       listener: (context, state) {
         state.status.matchAny(
@@ -88,7 +92,7 @@ class _BookFormPageState extends BaseState<BookFormPage, BookFormCubit> {
       },
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (bool didPop, Object? result) {
           if (didPop) return;
           Navigator.pop(context);
         },
@@ -96,52 +100,57 @@ class _BookFormPageState extends BaseState<BookFormPage, BookFormCubit> {
           appBar: CeebAppBar(
             title: 'Cadastro de Livro',
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  CeebField(
-                    label: 'Nome',
-                    controller: _nameEC,
-                    validator: Validatorless.required('Nome é obrigatório'),
-                  ),
-                  const SizedBox(height: 15),
-                  CeebField(
-                    label: 'Autor',
-                    controller: _authorEC,
-                    validator: Validatorless.required('Autor é obrigatório'),
-                  ),
-                  const SizedBox(height: 15),
-                  CeebField(
-                    label: 'Escritor',
-                    controller: _writerEC,
-                  ),
-                  const SizedBox(height: 15),
-                  CeebField(
-                    label: 'Código',
-                    controller: _codeEC,
-                    validator: Validatorless.required('Código é obrigatório'),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context)
-                            .pushNamedAndRemoveUntil(Constants.ROUTE_BOOK_LIST,
-                                (Route<dynamic> route) => false),
-                        child: const Text('Cancelar'),
-                      ),
-                      ElevatedButton(
-                        onPressed: _submit,
-                        child: const Text('Salvar'),
-                      ),
-                    ],
-                  ),
-                ],
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    CeebField(
+                      label: 'Nome',
+                      controller: _nameEC,
+                      validator: Validatorless.required('Nome é obrigatório'),
+                    ),
+                    const SizedBox(height: 15),
+                    CeebField(
+                      label: 'Autor',
+                      controller: _authorEC,
+                      validator: Validatorless.required('Autor é obrigatório'),
+                    ),
+                    const SizedBox(height: 15),
+                    CeebField(
+                      label: 'Escritor',
+                      controller: _writerEC,
+                    ),
+                    const SizedBox(height: 15),
+                    CeebField(
+                      label: 'Código',
+                      controller: _codeEC,
+                      validator: Validatorless.required('Código é obrigatório'),
+                      inputFormatters: [codeMask],
+                      capitalize: true,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context)
+                              .pushNamedAndRemoveUntil(
+                                  Constants.ROUTE_BOOK_LIST,
+                                  (Route<dynamic> route) => false),
+                          child: const Text('Cancelar'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _submit,
+                          child: const Text('Salvar'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

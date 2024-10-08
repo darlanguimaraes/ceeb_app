@@ -14,21 +14,36 @@ enum CategoryFormStatus {
 
 class CategoryFormState extends Equatable {
   final CategoryFormStatus status;
+  final bool fixedQuantity;
+  final bool fixedPrice;
 
   const CategoryFormState({
     required this.status,
+    required this.fixedQuantity,
+    required this.fixedPrice,
   });
 
-  const CategoryFormState.initial() : status = CategoryFormStatus.initial;
+  const CategoryFormState.initial()
+      : status = CategoryFormStatus.initial,
+        fixedQuantity = false,
+        fixedPrice = false;
 
   @override
-  List<Object?> get props => [status];
+  List<Object?> get props => [
+        status,
+        fixedQuantity,
+        fixedPrice,
+      ];
 
   CategoryFormState copyWith({
     CategoryFormStatus? status,
+    bool? fixedQuantity,
+    bool? fixedPrice,
   }) {
     return CategoryFormState(
       status: status ?? this.status,
+      fixedQuantity: fixedQuantity ?? this.fixedQuantity,
+      fixedPrice: fixedPrice ?? this.fixedPrice,
     );
   }
 }

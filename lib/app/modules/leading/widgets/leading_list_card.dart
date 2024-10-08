@@ -52,13 +52,13 @@ class LeadingListCard extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           title: Text(
-            leading.reader.name ?? '',
+            leading.readerName ?? '',
             style: context.textStyles.textBold.copyWith(fontSize: 20),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(leading.book.name!),
+              Text(leading.bookName!),
               Text(
                   'Data de entrega: ${DateFormat('dd/MM/yyyy').format(leading.expectedDate)}')
             ],

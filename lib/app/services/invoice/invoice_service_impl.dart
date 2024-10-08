@@ -18,4 +18,9 @@ class InvoiceServiceImpl implements InvoiceService {
   Future<void> save(InvoiceModel invoice) async {
     await _invoiceRepository.save(invoice);
   }
+
+  @override
+  Future<void> update(InvoiceModel invoice) async {
+    await _invoiceRepository.update(invoice);
+  }
 }

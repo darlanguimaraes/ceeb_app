@@ -18,4 +18,9 @@ class ReaderServiceImpl implements ReaderService {
   Future<void> save(ReaderModel reader) async {
     await _readerRepository.save(reader);
   }
+
+  @override
+  Future<void> update(ReaderModel reader) async {
+    await _readerRepository.update(reader);
+  }
 }

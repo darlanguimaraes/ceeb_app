@@ -16,7 +16,7 @@ class NoteModule extends CeebModule {
           bindings: [
             Provider<NoteRepository>(
               create: (context) =>
-                  NoteRepositoryImpl(isarHelper: context.read()),
+                  NoteRepositoryImpl(sqliteConnectionFactory: context.read()),
             ),
             Provider<NoteService>(
               create: (context) =>

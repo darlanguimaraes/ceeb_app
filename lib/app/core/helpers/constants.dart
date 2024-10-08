@@ -28,4 +28,13 @@ class Constants {
 
   static const ROUTE_NOTE_LIST = '/note/list';
   static const ROUTE_NOTE_FORM = '/note/form';
+
+  static const ROUTE_SYNC = '/sync';
+
+  static const TABLE_CATEGORY = 'categories';
+  static const TABLE_BOOK = 'books';
+  static const TABLE_INVOICE = 'invoices';
+  static const TABLE_LEADING = 'leadings';
+  static const TABLE_NOTES = 'notes';
+  static const TABLE_READER = 'readers';
 }

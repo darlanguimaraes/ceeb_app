@@ -1,5 +1,5 @@
 import 'package:ceeb_app/app/app_widget.dart';
-import 'package:ceeb_app/app/core/database/isar_helper.dart';
+import 'package:ceeb_app/app/core/database/sqlite_connection_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +11,7 @@ class AppModule extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider(
-          create: (context) => IsarHelper.instance,
+          create: (context) => SqliteConnectionFactory(),
           lazy: false,
         ),
       ],

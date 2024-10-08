@@ -15,8 +15,8 @@ class CategoryModule extends CeebModule {
       : super(
           bindings: [
             Provider<CategoryRepository>(
-              create: (context) =>
-                  CategoryRepositoryImpl(isarHelper: context.read()),
+              create: (context) => CategoryRepositoryImpl(
+                  sqliteConnectionFactory: context.read()),
             ),
             Provider<CategoryService>(
               create: (context) => CategoryServiceImpl(context.read()),

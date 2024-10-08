@@ -41,9 +41,11 @@ class _CategoryFormPageState
       final category = args as CategoryModel;
       _id = category.id;
       _nameEC.text = category.name;
-      _priceEC.text = TextFormatter.formatReal(category.price);
+      _priceEC.text = TextFormatter.formatReal(category.price!);
       _formatterPrice.formatEditUpdate(
           TextEditingValue.empty, TextEditingValue(text: _priceEC.text));
+      controller.changeQuantityFixed(category.fixedQuantity);
+      controller.changePriceFixed(category.fixedPrice);
     }
   }
 
@@ -55,14 +57,32 @@ class _CategoryFormPageState
   }
 
   void _submit() {
-    final valid = _formKey.currentState?.validate() ?? false;
+    final valid = validateForm();
     if (valid) {
-      controller.save(
-        _id,
-        _nameEC.text.trim(),
-        _formatterPrice.getUnformattedValue().toDouble(),
+      final category = CategoryModel(
+        id: _id,
+        name: _nameEC.text.trim(),
+        price: _formatterPrice.getUnformattedValue().toDouble() > 0.0
+            ? _formatterPrice.getUnformattedValue().toDouble()
+            : null,
+        sync: false,
+        fixedQuantity: controller.state.fixedQuantity,
+        fixedPrice: controller.state.fixedPrice,
       );
+      controller.save(category);
     }
+  }
+
+  bool validateForm() {
+    final valid = _formKey.currentState?.validate() ?? false;
+    bool isValid = true;
+    final price = _formatterPrice.getUnformattedValue().toDouble();
+
+    if (controller.state.fixedPrice && price <= 0) {
+      isValid = false;
+      showError("Para preço fixo é obrigatório informar o valor");
+    }
+    return valid && isValid;
   }
 
   @override
@@ -86,7 +106,7 @@ class _CategoryFormPageState
       },
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (bool didPop, Object? result) {
           if (didPop) return;
           Navigator.of(context).pushNamedAndRemoveUntil(
               Constants.ROUTE_CATEGORY_LIST, (Route<dynamic> route) => false);
@@ -96,7 +116,7 @@ class _CategoryFormPageState
             title: 'Cadastro de Categoria',
           ),
           body: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
             child: Form(
               key: _formKey,
               child: Column(
@@ -111,9 +131,44 @@ class _CategoryFormPageState
                   CeebField(
                     label: 'Preço',
                     controller: _priceEC,
-                    validator: Validatorless.required('Preço é obrigatório'),
                     inputFormatters: [_formatterPrice],
                     keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        children: [
+                          BlocConsumer<CategoryFormCubit, CategoryFormState>(
+                            listener: (context, state) {},
+                            builder: (context, state) {
+                              return Checkbox(
+                                value: controller.state.fixedPrice,
+                                onChanged: (value) =>
+                                    controller.changePriceFixed(value!),
+                              );
+                            },
+                          ),
+                          const Text('Preço fixo'),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          BlocConsumer<CategoryFormCubit, CategoryFormState>(
+                            listener: (context, state) {},
+                            builder: (context, state) {
+                              return Checkbox(
+                                value: controller.state.fixedQuantity,
+                                onChanged: (value) =>
+                                    controller.changeQuantityFixed(value!),
+                              );
+                            },
+                          ),
+                          const Text('Quantidade fixa (1)'),
+                        ],
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
                   Row(

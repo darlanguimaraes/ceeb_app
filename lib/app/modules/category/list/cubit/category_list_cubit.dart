@@ -12,7 +12,7 @@ class CategoryListCubit extends Cubit<CategoryListState> {
   Future<void> list() async {
     try {
       emit(state.copyWith(status: CategoryListStatus.loading));
-      final categories = await _categoryService.list();
+      final categories = await _categoryService.list(null);
       emit(state.copyWith(
         status: CategoryListStatus.loaded,
         categories: categories,

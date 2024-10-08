@@ -18,4 +18,9 @@ class BookServiceImpl implements BookService {
   Future<void> save(BookModel book) async {
     await _bookRepository.save(book);
   }
+
+  @override
+  Future<void> update(BookModel book) async {
+    await _bookRepository.update(book);
+  }
 }

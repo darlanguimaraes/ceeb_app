@@ -13,7 +13,11 @@ class BookFormCubit extends Cubit<BookFormState> {
   Future<void> save(BookModel book) async {
     try {
       emit(state.copyWith(status: BookFormStatus.loading));
-      await _bookService.save(book);
+      if (book.id == null) {
+        await _bookService.save(book);
+      } else {
+        await _bookService.update(book);
+      }
       emit(state.copyWith(status: BookFormStatus.success));
     } catch (e, s) {
       log('Erro ao salvar os dados', error: e, stackTrace: s);

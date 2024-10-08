@@ -19,7 +19,7 @@ class _LeadingListPageState
   @override
   void onReady() {
     super.onReady();
-    controller.list(null);
+    controller.list(null, null);
   }
 
   @override

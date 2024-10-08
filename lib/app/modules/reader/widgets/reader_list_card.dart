@@ -24,6 +24,7 @@ class ReaderListCard extends StatelessWidget {
             reader.name,
             style: context.textStyles.textBold.copyWith(fontSize: 20),
           ),
+          subtitle: Text(reader.phone),
           trailing: IconButton(
             icon: const Icon(
               Icons.edit,

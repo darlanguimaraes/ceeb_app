@@ -1,6 +1,5 @@
 import 'package:ceeb_app/app/core/helpers/constants.dart';
 import 'package:ceeb_app/app/core/helpers/text_formatter.dart';
-import 'package:ceeb_app/app/core/helpers/text_styles.dart';
 import 'package:ceeb_app/app/core/ui/base_state/base_state.dart';
 import 'package:ceeb_app/app/core/ui/widgets/ceeb_app_bar.dart';
 import 'package:ceeb_app/app/core/ui/widgets/ceeb_field.dart';
@@ -29,6 +28,7 @@ class _InvoiceFormPageState
 
   final categoryValid = ValueNotifier<bool>(true);
   String? _categorySelected;
+  String? _paymentType;
   bool _isMoney = true;
 
   @override
@@ -42,7 +42,8 @@ class _InvoiceFormPageState
       _quantityEC.text = invoice.quantity.toString();
       _totalEC.text = (invoice.quantity * invoice.price).toString();
       _isMoney = invoice.paymentType == 'Dinheiro';
-      _categorySelected = invoice.category.id.toString();
+      _categorySelected = invoice.categoryId.toString();
+      _paymentType = invoice.paymentType;
     }
     controller.loadDependencies();
     setState(() {});
@@ -59,23 +60,19 @@ class _InvoiceFormPageState
     final category =
         controller.getCategorySelected(int.parse(_categorySelected!));
     if (valid) {
-      final categoryEmbedded = Category();
-      categoryEmbedded.id = category!.id;
-      categoryEmbedded.name = category.name;
-
       final quantity = int.tryParse(_quantityEC.text) ?? 1;
-      final value = quantity * category.price;
+      final value = quantity.toDouble(); //* category!.price;
 
       final invoice = InvoiceModel(
         id: _id,
         date: DateFormat('dd/MM/yyyy').parse(_dateEC.text),
         quantity: quantity,
         value: value,
-        price: category.price,
+        price: category!.price!,
         credit: true,
         paymentType: _isMoney ? 'Dinheiro' : 'PIX',
         sync: false,
-        category: categoryEmbedded,
+        categoryId: category.id!,
         updatedAt: DateTime.now(),
       );
 
@@ -183,7 +180,7 @@ class _InvoiceFormPageState
                               final category = controller.getCategorySelected(
                                   int.parse(_categorySelected!));
                               final total =
-                                  int.parse(quantity) * category!.price;
+                                  int.parse(quantity) * category!.price!;
                               setState(() {
                                 _totalEC.text = TextFormatter.formatReal(total);
                               });
@@ -203,7 +200,7 @@ class _InvoiceFormPageState
                         if (value.isNotEmpty && _categorySelected != null) {
                           final category = controller.getCategorySelected(
                               int.parse(_categorySelected!));
-                          final total = int.parse(value) * category!.price;
+                          final total = int.parse(value) * category!.price!;
                           setState(() {
                             _totalEC.text = TextFormatter.formatReal(total);
                           });
@@ -217,43 +214,45 @@ class _InvoiceFormPageState
                       controller: _totalEC,
                     ),
                     const SizedBox(height: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Forma de pagamento',
-                          style: context.textStyles.textBold,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Expanded(
-                              child: RadioListTile(
-                                title: const Text("Dinheiro"),
-                                value: true,
-                                groupValue: _isMoney,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isMoney = value!;
-                                  });
-                                },
-                              ),
+                    BlocBuilder<InvoiceFormCubit, InvoiceFormState>(
+                      builder: (context, state) {
+                        return DropdownButtonFormField<String?>(
+                          validator: Validatorless.required(
+                              'Forma de Pagamento é obrigatório'),
+                          decoration: InputDecoration(
+                            labelText: 'Forma de Pagamento',
+                            labelStyle: const TextStyle(
+                                fontSize: 15, color: Colors.black),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            Expanded(
-                              child: RadioListTile(
-                                title: const Text("Pix"),
-                                value: false,
-                                groupValue: _isMoney,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isMoney = value!;
-                                  });
-                                },
-                              ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Colors.red),
+                            ),
+                          ),
+                          value: _paymentType,
+                          items: const [
+                            DropdownMenuItem(
+                              value: '',
+                              child: Text('Selecione'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Dinheiro',
+                              child: Text('Dinheiro'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'PIX',
+                              child: Text('PIX'),
                             ),
                           ],
-                        ),
-                      ],
+                          onChanged: (value) {
+                            setState(() {
+                              _paymentType = value;
+                            });
+                          },
+                        );
+                      },
                     ),
                     const SizedBox(height: 20),
                     Row(

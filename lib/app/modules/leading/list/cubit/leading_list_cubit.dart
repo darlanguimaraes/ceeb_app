@@ -9,10 +9,10 @@ class LeadingListCubit extends Cubit<LeadingListState> {
 
   LeadingListCubit(this._leadingService) : super(LeadingListState.initial());
 
-  Future<void> list(String? filter) async {
+  Future<void> list(String? filter, bool? returned) async {
     try {
       emit(state.copyWith(status: LeadingListStatus.loading));
-      final leadings = await _leadingService.list(filter);
+      final leadings = await _leadingService.list(filter, returned);
       emit(state.copyWith(
         status: LeadingListStatus.loaded,
         leadings: leadings,

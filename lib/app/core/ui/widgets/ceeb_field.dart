@@ -13,6 +13,7 @@ class CeebField extends StatelessWidget {
   final TextInputType? keyboardType;
   final bool? enabled;
   final Function(String)? onChanged;
+  final bool? capitalize;
 
   CeebField({
     super.key,
@@ -26,6 +27,7 @@ class CeebField extends StatelessWidget {
     this.inputFormatters,
     this.keyboardType,
     this.onChanged,
+    this.capitalize,
   })  : assert(
           obscureText == true ? suffixIconButton == null : true,
           'obscureText não pode ser enviado em conjunto com suffixIcon',
@@ -45,6 +47,9 @@ class CeebField extends StatelessWidget {
           keyboardType: keyboardType,
           enabled: enabled,
           onChanged: onChanged,
+          textCapitalization: capitalize == true
+              ? TextCapitalization.characters
+              : TextCapitalization.none,
           decoration: InputDecoration(
             labelText: label,
             labelStyle: const TextStyle(fontSize: 15, color: Colors.black),

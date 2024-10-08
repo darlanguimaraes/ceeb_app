@@ -10,4 +10,4 @@ Project built for the Casa Espírita Eurípedes Barsanulpho
 - Bloc
 - Cubit
 - Provider
-- Isar
+- SQlite

@@ -23,8 +23,8 @@ class LeadingModule extends CeebModule {
       : super(
           bindings: [
             Provider<LeadingRepository>(
-              create: (context) =>
-                  LeadingRepositoryImpl(isarHelper: context.read()),
+              create: (context) => LeadingRepositoryImpl(
+                  sqliteConnectionFactory: context.read()),
             ),
             Provider<LeadingService>(
               create: (context) =>
@@ -32,7 +32,7 @@ class LeadingModule extends CeebModule {
             ),
             Provider<ReaderRepository>(
               create: (context) =>
-                  ReaderRepositoryImpl(isarHelper: context.read()),
+                  ReaderRepositoryImpl(connectionFactory: context.read()),
             ),
             Provider<ReaderService>(
               create: (context) =>
@@ -40,7 +40,7 @@ class LeadingModule extends CeebModule {
             ),
             Provider<BookRepository>(
               create: (context) =>
-                  BookRepositoryImpl(isarHelper: context.read()),
+                  BookRepositoryImpl(sqliteConnectionFactory: context.read()),
             ),
             Provider<BookService>(
               create: (context) =>

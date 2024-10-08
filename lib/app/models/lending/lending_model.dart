@@ -1,42 +1,70 @@
+import 'dart:convert';
+
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:isar/isar.dart';
 
-part 'lending_model.g.dart';
-
-@embedded
-class BookEmbedded {
-  int? id;
-  String? name;
-}
-
-@embedded
-class ReaderEmbedded {
-  int? id;
-  String? name;
-}
-
-@collection
 class LeadingModel {
-  Id? id;
-  BookEmbedded book;
-  ReaderEmbedded reader;
+  int? id;
+  int bookId;
+  String? bookName;
+  String? bookCode;
+  int readerId;
+  String? readerName;
   DateTime date;
   DateTime expectedDate;
   DateTime? deliveryDate;
-  DateTime updatedAt;
   bool returned;
   bool sync;
   String? remoteId;
   LeadingModel({
     this.id,
-    required this.book,
-    required this.reader,
+    required this.bookId,
+    this.bookName,
+    this.bookCode,
+    required this.readerId,
+    this.readerName,
     required this.date,
     required this.expectedDate,
     this.deliveryDate,
-    required this.updatedAt,
     required this.returned,
     required this.sync,
     this.remoteId,
   });
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'book_id': bookId,
+      'reader_id': readerId,
+      'date': date.millisecondsSinceEpoch,
+      'expected_date': expectedDate.millisecondsSinceEpoch,
+      'delivery_date': deliveryDate?.millisecondsSinceEpoch,
+      'returned': returned,
+      'remote_id': remoteId,
+    };
+  }
+
+  factory LeadingModel.fromMap(Map<String, dynamic> map) {
+    return LeadingModel(
+      id: map['id'] != null ? map['id'] as int : null,
+      bookId: map['book_id'] as int,
+      bookName: map['book_name'] != null ? map['book_name'] as String : null,
+      bookCode: map['book_code'] != null ? map['book_code'] as String : null,
+      readerId: map['reader_id'] as int,
+      readerName:
+          map['reader_name'] != null ? map['reader_name'] as String : null,
+      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      expectedDate: DateTime.fromMillisecondsSinceEpoch(map['expected_date']),
+      deliveryDate: map['delivery_date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['delivery_date'])
+          : null,
+      returned: map['returned'] == 1,
+      sync: map['sync'] == 1,
+      remoteId: map['remote_id'] != null ? map['remote_id'] as String : null,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory LeadingModel.fromJson(String source) =>
+      LeadingModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

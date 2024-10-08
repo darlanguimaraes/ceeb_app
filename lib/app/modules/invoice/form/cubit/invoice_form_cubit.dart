@@ -30,7 +30,7 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
   Future<void> loadDependencies() async {
     try {
       emit(state.copyWith(status: InvoiceFormStatus.loading));
-      final categories = await _categoryService.list();
+      final categories = await _categoryService.list(null);
       emit(state.copyWith(
         status: InvoiceFormStatus.loaded,
         categories: categories,

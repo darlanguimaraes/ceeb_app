@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   MenuButton(
                     title: 'Sincronizar',
-                    route: '/sync',
+                    route: Constants.ROUTE_SYNC,
                     iconData: Icons.sync,
                   ),
                 ],

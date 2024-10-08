@@ -10,12 +10,17 @@ class LeadingServiceImpl implements LeadingService {
       : _leadingRepository = leadingRepository;
 
   @override
-  Future<List<LeadingModel>> list(String? filter) async {
-    return await _leadingRepository.list(filter);
+  Future<List<LeadingModel>> list(String? filter, bool? returned) async {
+    return await _leadingRepository.list(filter, returned);
   }
 
   @override
   Future<void> save(LeadingModel leading) async {
     await _leadingRepository.save(leading);
+  }
+
+  @override
+  Future<void> update(LeadingModel leading) async {
+    await _leadingRepository.update(leading);
   }
 }

@@ -1,33 +1,26 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:isar/isar.dart';
-
-part 'reader_model.g.dart';
-
-@collection
 class ReaderModel {
-  Id? id;
+  int? id;
   String name;
-  String? phone;
+  String phone;
   String? address;
   String? city;
   String? email;
   bool sync;
   bool openLoan;
   String? remoteId;
-  DateTime updatedAt;
   ReaderModel({
     this.id,
     required this.name,
-    this.phone,
+    required this.phone,
     this.address,
     this.city,
     this.email,
     required this.sync,
     required this.openLoan,
     this.remoteId,
-    required this.updatedAt,
   });
 
   Map<String, dynamic> toMap() {
@@ -38,10 +31,8 @@ class ReaderModel {
       'address': address,
       'city': city,
       'email': email,
-      'sync': sync,
-      'openLoan': openLoan,
-      'remoteId': remoteId,
-      'updatedAt': updatedAt.toIso8601String(),
+      'open_loan': openLoan,
+      'remote_id': remoteId,
     };
   }
 
@@ -49,14 +40,13 @@ class ReaderModel {
     return ReaderModel(
       id: map['id'],
       name: map['name'] as String,
-      phone: map['phone'] != null ? map['phone'] as String : null,
+      phone: map['phone'] as String,
       address: map['address'] != null ? map['address'] as String : null,
       city: map['city'] != null ? map['city'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
-      sync: map['sync'] as bool,
-      openLoan: map['openLoan'] as bool,
-      remoteId: map['remoteId'] != null ? map['remoteId'] as String : null,
-      updatedAt: DateTime.parse(map['updatedAt']),
+      sync: map['sync'] == 1,
+      openLoan: map['open_loan'] == 1,
+      remoteId: map['remote_id'] != null ? map['remote_id'] as String : null,
     );
   }
 

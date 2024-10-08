@@ -21,7 +21,11 @@ class LeadingFormCubit extends Cubit<LeadingFormState> {
   Future<void> save(LeadingModel leading) async {
     try {
       emit(state.copyWith(status: LeadingFormStatus.loading));
-      await _leadingService.save(leading);
+      if (leading.id == null) {
+        await _leadingService.save(leading);
+      } else {
+        await _leadingService.update(leading);
+      }
       emit(state.copyWith(status: LeadingFormStatus.success));
     } catch (e, s) {
       log('Erro ao salvar', error: e, stackTrace: s);

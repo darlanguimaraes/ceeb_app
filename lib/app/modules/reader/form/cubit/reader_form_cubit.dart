@@ -13,7 +13,11 @@ class ReaderFormCubit extends Cubit<ReaderFormState> {
   Future<void> save(ReaderModel reader) async {
     try {
       emit(state.copyWith(status: ReaderFormStatus.loading));
-      await _readerService.save(reader);
+      if (reader.id == null) {
+        await _readerService.save(reader);
+      } else {
+        await _readerService.update(reader);
+      }
       emit(state.copyWith(status: ReaderFormStatus.success));
     } catch (e, s) {
       log('Erro ao salvar os dados', error: e, stackTrace: s);

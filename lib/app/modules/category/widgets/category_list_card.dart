@@ -26,7 +26,9 @@ class CategoryListCard extends StatelessWidget {
             style: context.textStyles.textBold.copyWith(fontSize: 20),
           ),
           subtitle: Text(
-            TextFormatter.formatReal(category.price),
+            category.price != null
+                ? TextFormatter.formatReal(category.price!)
+                : '',
           ),
           trailing: IconButton(
             icon: const Icon(

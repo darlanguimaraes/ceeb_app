@@ -25,7 +25,7 @@ class InvoiceListCard extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           title: Text(
-            invoice.category.name ?? '',
+            invoice.categoryName ?? '',
             style: context.textStyles.textBold.copyWith(fontSize: 20),
           ),
           subtitle: Text('$date - $value'),

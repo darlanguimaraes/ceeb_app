@@ -1,5 +1,5 @@
 import 'package:ceeb_app/app/core/helpers/constants.dart';
-import 'package:ceeb_app/app/models/node/note_model.dart';
+import 'package:ceeb_app/app/models/note/note_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,7 +23,7 @@ class NoteListCard extends StatelessWidget {
             vertical: 5,
           ),
           title: Text(
-            note.text,
+            note.description,
             overflow: TextOverflow.ellipsis,
           ),
           subtitle: Text(DateFormat('dd/MM/yyyy').format(note.date)),

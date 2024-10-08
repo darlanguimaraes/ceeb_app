@@ -3,7 +3,7 @@ import 'package:ceeb_app/app/core/ui/base_state/base_state.dart';
 import 'package:ceeb_app/app/core/ui/extensions/theme_extensions.dart';
 import 'package:ceeb_app/app/core/ui/widgets/ceeb_app_bar.dart';
 import 'package:ceeb_app/app/core/ui/widgets/ceeb_field.dart';
-import 'package:ceeb_app/app/models/node/note_model.dart';
+import 'package:ceeb_app/app/models/note/note_model.dart';
 import 'package:ceeb_app/app/modules/note/form/cubit/note_form_cubit.dart';
 import 'package:ceeb_app/app/modules/note/form/cubit/note_form_state.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +36,7 @@ class _NoteFormPageState extends BaseState<NoteFormPage, NoteFormCubit> {
       final note = args as NoteModel;
       _id = note.id;
       _dateEC.text = DateFormat('dd/MM/yyyy').format(note.date);
-      _textEC.text = note.text;
+      _textEC.text = note.description;
       _complete = note.complete;
     } else {
       _dateEC.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
@@ -49,7 +49,7 @@ class _NoteFormPageState extends BaseState<NoteFormPage, NoteFormCubit> {
       final note = NoteModel(
         id: _id,
         date: DateFormat('dd/MM/yyyy').parse(_dateEC.text),
-        text: _textEC.text,
+        description: _textEC.text,
         complete: _complete,
         updatedAt: DateTime.now(),
       );

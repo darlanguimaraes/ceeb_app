@@ -25,7 +25,7 @@ class _BookListPageState extends BaseState<BookListPage, BookListCubit> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (bool didPop, Object? result) {
         if (didPop) return;
         Navigator.of(context).pushNamedAndRemoveUntil(
           Constants.ROUTE_MENU,

@@ -1,21 +1,16 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:isar/isar.dart';
-
-part 'book_model.g.dart';
-
-@collection
 class BookModel {
-  Id? id;
+  int? id;
   String name;
   String author;
   String? writer;
   String code;
   bool borrow;
   bool sync;
-  DateTime updatedAt;
   String? remoteId;
+  String? nameDiacritics;
   BookModel({
     this.id,
     required this.name,
@@ -24,8 +19,8 @@ class BookModel {
     required this.code,
     required this.borrow,
     required this.sync,
-    required this.updatedAt,
     this.remoteId,
+    this.nameDiacritics,
   });
 
   Map<String, dynamic> toMap() {
@@ -36,23 +31,20 @@ class BookModel {
       'writer': writer,
       'code': code,
       'borrow': borrow,
-      'sync': sync,
-      'updatedAt': updatedAt.toIso8601String(),
-      'remoteId': remoteId,
+      'remote_id': remoteId,
     };
   }
 
   factory BookModel.fromMap(Map<String, dynamic> map) {
     return BookModel(
-      id: map['id'],
+      id: map['id'] != null ? map['id'] as int : null,
       name: map['name'] as String,
       author: map['author'] as String,
       writer: map['writer'] != null ? map['writer'] as String : null,
       code: map['code'] as String,
-      borrow: map['borrow'] as bool,
-      sync: map['sync'] as bool,
-      updatedAt: DateTime.parse(map['updatedAt']),
-      remoteId: map['remoteId'] != null ? map['remoteId'] as String : null,
+      borrow: (map['borrow'] as int) == 0 ? false : true,
+      sync: map['sync'] == 1,
+      remoteId: map['remote_id'] != null ? map['remote_id'] as String : null,
     );
   }
 

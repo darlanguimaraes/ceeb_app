@@ -7,6 +7,7 @@ import 'package:ceeb_app/app/modules/reader/form/cubit/reader_form_cubit.dart';
 import 'package:ceeb_app/app/modules/reader/form/cubit/reader_form_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:validatorless/validatorless.dart';
 
 class ReaderFormPage extends StatefulWidget {
@@ -36,7 +37,7 @@ class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
       _id = reader.id;
       _openLoan = reader.openLoan;
       _nameEC.text = reader.name;
-      _phoneEC.text = reader.phone ?? '';
+      _phoneEC.text = reader.phone;
       _addressEC.text = reader.address ?? '';
       _cityEC.text = reader.city ?? '';
       _emailEC.text = reader.email ?? '';
@@ -65,7 +66,6 @@ class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
         email: _emailEC.text,
         sync: false,
         openLoan: _openLoan ?? false,
-        updatedAt: DateTime.now(),
       );
       controller.save(reader);
     }
@@ -73,6 +73,11 @@ class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
 
   @override
   Widget build(BuildContext context) {
+    final phoneMask = MaskTextInputFormatter(
+      mask: '(##) #####-####',
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+
     return BlocListener<ReaderFormCubit, ReaderFormState>(
       listener: (context, state) {
         state.status.matchAny(
@@ -92,7 +97,7 @@ class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
       },
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (bool didPop, Object? result) {
           if (didPop) return;
           Navigator.of(context).pushNamedAndRemoveUntil(
               Constants.ROUTE_READER_LIST, (Route<dynamic> route) => false);
@@ -101,60 +106,65 @@ class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
           appBar: CeebAppBar(
             title: 'Cadastro de Leitor',
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  CeebField(
-                    label: 'Name',
-                    controller: _nameEC,
-                    validator: Validatorless.required('Nome é obrigatório'),
-                  ),
-                  const SizedBox(height: 20),
-                  CeebField(
-                    label: 'Telefone',
-                    controller: _phoneEC,
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: 20),
-                  CeebField(
-                    label: 'E-mail',
-                    controller: _emailEC,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 20),
-                  CeebField(
-                    label: 'Endereço',
-                    controller: _addressEC,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 20),
-                  CeebField(
-                    label: 'Cidade',
-                    controller: _cityEC,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context)
-                            .pushNamedAndRemoveUntil(
-                                Constants.ROUTE_READER_LIST,
-                                (Route<dynamic> route) => false),
-                        child: const Text('Cancelar'),
-                      ),
-                      ElevatedButton(
-                        onPressed: _submit,
-                        child: const Text('Salvar'),
-                      ),
-                    ],
-                  ),
-                ],
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    CeebField(
+                      label: 'Nome',
+                      controller: _nameEC,
+                      validator: Validatorless.required('Nome é obrigatório'),
+                    ),
+                    const SizedBox(height: 20),
+                    CeebField(
+                      label: 'Telefone',
+                      controller: _phoneEC,
+                      keyboardType: TextInputType.phone,
+                      validator:
+                          Validatorless.required('Telefone é obrigatório'),
+                      inputFormatters: [phoneMask],
+                    ),
+                    const SizedBox(height: 20),
+                    CeebField(
+                      label: 'E-mail',
+                      controller: _emailEC,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 20),
+                    CeebField(
+                      label: 'Endereço',
+                      controller: _addressEC,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 20),
+                    CeebField(
+                      label: 'Cidade',
+                      controller: _cityEC,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context)
+                              .pushNamedAndRemoveUntil(
+                                  Constants.ROUTE_READER_LIST,
+                                  (Route<dynamic> route) => false),
+                          child: const Text('Cancelar'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _submit,
+                          child: const Text('Salvar'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

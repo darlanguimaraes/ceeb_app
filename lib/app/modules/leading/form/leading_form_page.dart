@@ -44,23 +44,14 @@ class _LeadingFormPageState
       if (message.isNotEmpty) {
         showError(message);
       } else {
-        final book = BookEmbedded();
-        book.id = _book!.id;
-        book.name = _book!.name;
-
-        final reader = ReaderEmbedded();
-        reader.id = _reader!.id;
-        reader.name = _reader!.name;
-
         final date = DateFormat('dd/MM/yyyy').parse(_dateEC.text);
 
         final leading = LeadingModel(
           id: _id,
-          book: book,
-          reader: reader,
+          bookId: _book!.id!,
+          readerId: _reader!.id!,
           date: date,
           expectedDate: date.add(const Duration(days: 30)),
-          updatedAt: DateTime.now(),
           returned: false,
           sync: false,
         );

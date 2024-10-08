@@ -2,7 +2,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:match/match.dart';
 
-import 'package:ceeb_app/app/models/node/note_model.dart';
+import 'package:ceeb_app/app/models/note/note_model.dart';
 
 part 'note_list_state.g.dart';
 
