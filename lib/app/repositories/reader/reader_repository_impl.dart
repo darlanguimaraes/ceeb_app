@@ -14,11 +14,11 @@ class ReaderRepositoryImpl implements ReaderRepository {
   Future<List<ReaderModel>> list(String? filter) async {
     final conn = await _connectionFactory.openConnection();
     var where = '';
-    if (filter != null) {
-      where = ' where lower(name) like "%${filter.toLowerCase()}%"';
+    if (filter != null && filter.isNotEmpty) {
+      where = ' where name_diacritics like "%${filter.toLowerCase()}%"';
     }
     final readers = await conn.rawQuery(
-        'select * from ${Constants.TABLE_READER} $where order by name');
+        'select * from ${Constants.TABLE_READER} $where order by name_diacritics asc');
     return readers.map((e) => ReaderModel.fromMap(e)).toList();
   }
 
@@ -37,6 +37,21 @@ class ReaderRepositoryImpl implements ReaderRepository {
       map,
       where: 'id=?',
       whereArgs: [reader.id],
+    );
+  }
+
+  @override
+  Future<void> borrowBook(int id, bool borrow) async {
+    final conn = await _connectionFactory.openConnection();
+    final map = {
+      'open_loan': borrow ? 1 : 0,
+      'sync': 0,
+    };
+    await conn.update(
+      Constants.TABLE_READER,
+      map,
+      where: 'id=?',
+      whereArgs: [id],
     );
   }
 }

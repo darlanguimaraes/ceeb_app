@@ -2,17 +2,17 @@ import 'package:ceeb_app/app/core/database/sqlite_connection_factory.dart';
 import 'package:ceeb_app/app/core/helpers/constants.dart';
 import 'package:ceeb_app/app/models/lending/lending_model.dart';
 
-import './leading_repository.dart';
+import 'lending_repository.dart';
 
-class LeadingRepositoryImpl implements LeadingRepository {
+class LendingRepositoryImpl implements LendingRepository {
   final SqliteConnectionFactory _sqliteConnectionFactory;
 
-  LeadingRepositoryImpl(
+  LendingRepositoryImpl(
       {required SqliteConnectionFactory sqliteConnectionFactory})
       : _sqliteConnectionFactory = sqliteConnectionFactory;
 
   @override
-  Future<List<LeadingModel>> list(String? filter, bool? returned) async {
+  Future<List<LendingModel>> list(String? filter, bool? returned) async {
     final conn = await _sqliteConnectionFactory.openConnection();
 
     var where = '';
@@ -39,30 +39,68 @@ class LeadingRepositoryImpl implements LeadingRepository {
         b.code as book_code, 
         r.id as reader_id, 
         r.name as reader_name
-      from ${Constants.TABLE_LEADING} l
+      from ${Constants.TABLE_LENDING} l
         inner join ${Constants.TABLE_BOOK} b on l.book_id=b.id
         inner join ${Constants.TABLE_READER} r on l.reader_id=r.id
       $where
       order by l.date desc''');
-    return result.map((e) => LeadingModel.fromMap(e)).toList();
+    return result.map((e) => LendingModel.fromMap(e)).toList();
   }
 
   @override
-  Future<void> save(LeadingModel leading) async {
+  Future<void> save(LendingModel leading) async {
     final conn = await _sqliteConnectionFactory.openConnection();
-    await conn.insert(Constants.TABLE_LEADING, leading.toMap());
+    await conn.insert(Constants.TABLE_LENDING, leading.toMap());
   }
 
   @override
-  Future<void> update(LeadingModel leading) async {
+  Future<void> update(LendingModel leading) async {
     final conn = await _sqliteConnectionFactory.openConnection();
     final map = leading.toMap();
-    map.remove('created_at');
     await conn.update(
-      Constants.TABLE_LEADING,
+      Constants.TABLE_LENDING,
       map,
       where: 'id=?',
       whereArgs: [leading.id],
+    );
+  }
+
+  @override
+  Future<LendingModel> get(int id) async {
+    final conn = await _sqliteConnectionFactory.openConnection();
+    final result = await conn
+        .rawQuery('select * from ${Constants.TABLE_LENDING} where id=$id');
+    return LendingModel.fromMap(result[0]);
+  }
+
+  @override
+  Future<void> renewLending(int id, DateTime expectedDate) async {
+    final conn = await _sqliteConnectionFactory.openConnection();
+    final map = {
+      'expected_date': expectedDate.millisecondsSinceEpoch,
+      'sync': 0,
+    };
+    await conn.update(
+      Constants.TABLE_LENDING,
+      map,
+      where: 'id=?',
+      whereArgs: [id],
+    );
+  }
+
+  @override
+  Future<void> returnLending(int id) async {
+    final conn = await _sqliteConnectionFactory.openConnection();
+    final map = {
+      'returned': 1,
+      'delivery_date': DateTime.now().millisecondsSinceEpoch,
+      'sync': 0,
+    };
+    await conn.update(
+      Constants.TABLE_LENDING,
+      map,
+      where: 'id=?',
+      whereArgs: [id],
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:ceeb_app/app/core/helpers/constants.dart';
 import 'package:ceeb_app/app/core/ui/base_state/base_state.dart';
+import 'package:ceeb_app/app/core/ui/extensions/size_extensions.dart';
 import 'package:ceeb_app/app/core/ui/widgets/ceeb_app_bar.dart';
+import 'package:ceeb_app/app/core/ui/widgets/ceeb_field.dart';
 import 'package:ceeb_app/app/modules/book/list/cubit/book_list_cubit.dart';
 import 'package:ceeb_app/app/modules/book/list/cubit/book_list_state.dart';
 import 'package:ceeb_app/app/modules/book/widgets/book_list_card.dart';
@@ -15,10 +17,18 @@ class BookListPage extends StatefulWidget {
 }
 
 class _BookListPageState extends BaseState<BookListPage, BookListCubit> {
+  final _filterEC = TextEditingController();
+
   @override
   void onReady() {
     super.onReady();
     controller.list(null);
+  }
+
+  @override
+  void dispose() {
+    _filterEC.dispose();
+    super.dispose();
   }
 
   @override
@@ -59,27 +69,49 @@ class _BookListPageState extends BaseState<BookListPage, BookListCubit> {
               child: CustomScrollView(
                 slivers: [
                   SliverAppBar(
-                    expandedHeight: 70,
+                    expandedHeight: 120,
+                    toolbarHeight: 120,
                     backgroundColor: Colors.white,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    title: Column(
                       children: [
-                        ElevatedButton.icon(
-                          label: const Text('Voltar'),
-                          onPressed: () =>
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                            Constants.ROUTE_MENU,
-                            (Route<dynamic> route) => false,
-                          ),
-                          icon: const Icon(
-                            Icons.home,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton.icon(
+                              label: const Text('Voltar'),
+                              onPressed: () =>
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                Constants.ROUTE_MENU,
+                                (Route<dynamic> route) => false,
+                              ),
+                              icon: const Icon(
+                                Icons.home,
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () => Navigator.of(context)
+                                  .pushNamed(Constants.ROUTE_BOOK_FORM),
+                              label: const Text('Novo'),
+                              icon: const Icon(Icons.add),
+                            ),
+                          ],
                         ),
-                        ElevatedButton.icon(
-                          onPressed: () => Navigator.of(context)
-                              .pushNamed(Constants.ROUTE_BOOK_FORM),
-                          label: const Text('Novo'),
-                          icon: const Icon(Icons.add),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            SizedBox(
+                              height: 50,
+                              width: context.percentWidth(0.6),
+                              child: CeebField(label: 'Filtro'),
+                            ),
+                            const SizedBox(width: 10),
+                            TextButton(
+                              onPressed: () {
+                                controller.list(_filterEC.text.trim());
+                              },
+                              child: const Text('Filtrar'),
+                            )
+                          ],
                         ),
                       ],
                     ),

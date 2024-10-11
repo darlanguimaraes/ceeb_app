@@ -4,7 +4,7 @@ import 'package:ceeb_app/app/modules/home/home_module.dart';
 import 'package:ceeb_app/app/modules/home/home_page.dart';
 import 'package:ceeb_app/app/core/ui/ui_config.dart';
 import 'package:ceeb_app/app/modules/invoice/invoice_module.dart';
-import 'package:ceeb_app/app/modules/leading/leading_module.dart';
+import 'package:ceeb_app/app/modules/lending/lending_module.dart';
 import 'package:ceeb_app/app/modules/note/note_module.dart';
 import 'package:ceeb_app/app/modules/reader/reader_module.dart';
 import 'package:ceeb_app/app/modules/synchronize/synchronize_module.dart';
@@ -49,7 +49,7 @@ class _AppWidgetState extends State<AppWidget> {
         ...BookModule().routers,
         ...ReaderModule().routers,
         ...InvoiceModule().routers,
-        ...LeadingModule().routers,
+        ...LendingModule().routers,
         ...NoteModule().routers,
         ...SynchronizeModule().routers,
       },

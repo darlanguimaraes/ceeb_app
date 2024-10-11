@@ -35,8 +35,8 @@ class NoteModel {
       date: DateTime.parse(map['date']),
       description: map['description'] as String,
       complete: map['complete'] == 1,
-      createdAt: DateTime.parse(map['created_at']),
-      updatedAt: DateTime.parse(map['updated_at']),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at']),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(map['updated_at']),
     );
   }
 

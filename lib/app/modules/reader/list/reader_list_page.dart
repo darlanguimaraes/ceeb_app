@@ -17,10 +17,18 @@ class ReaderListPage extends StatefulWidget {
 }
 
 class _ReaderListPageState extends BaseState<ReaderListPage, ReaderListCubit> {
+  final _filterEC = TextEditingController();
+
   @override
   void onReady() {
     super.onReady();
     controller.list(null);
+  }
+
+  @override
+  void dispose() {
+    _filterEC.dispose();
+    super.dispose();
   }
 
   @override
@@ -95,11 +103,17 @@ class _ReaderListPageState extends BaseState<ReaderListPage, ReaderListCubit> {
                             SizedBox(
                               height: 50,
                               width: context.percentWidth(0.6),
-                              child: CeebField(label: 'Filtro'),
+                              child: CeebField(
+                                label: 'Filtro',
+                                controller: _filterEC,
+                              ),
                             ),
                             const SizedBox(width: 10),
                             TextButton(
-                                onPressed: () {}, child: const Text('Filtrar'))
+                              onPressed: () =>
+                                  controller.list(_filterEC.text.trim()),
+                              child: const Text('Filtrar'),
+                            )
                           ],
                         ),
                       ],

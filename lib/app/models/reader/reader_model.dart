@@ -4,6 +4,7 @@ import 'dart:convert';
 class ReaderModel {
   int? id;
   String name;
+  String nameDiacritics;
   String phone;
   String? address;
   String? city;
@@ -14,6 +15,7 @@ class ReaderModel {
   ReaderModel({
     this.id,
     required this.name,
+    required this.nameDiacritics,
     required this.phone,
     this.address,
     this.city,
@@ -27,6 +29,7 @@ class ReaderModel {
     return <String, dynamic>{
       'id': id,
       'name': name,
+      'name_diacritics': nameDiacritics,
       'phone': phone,
       'address': address,
       'city': city,
@@ -40,6 +43,7 @@ class ReaderModel {
     return ReaderModel(
       id: map['id'],
       name: map['name'] as String,
+      nameDiacritics: map['name_diacritics'] as String,
       phone: map['phone'] as String,
       address: map['address'] != null ? map['address'] as String : null,
       city: map['city'] != null ? map['city'] as String : null,

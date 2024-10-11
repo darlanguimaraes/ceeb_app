@@ -16,7 +16,9 @@ class CategoryModule extends CeebModule {
           bindings: [
             Provider<CategoryRepository>(
               create: (context) => CategoryRepositoryImpl(
-                  sqliteConnectionFactory: context.read()),
+                sqliteConnectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<CategoryService>(
               create: (context) => CategoryServiceImpl(context.read()),

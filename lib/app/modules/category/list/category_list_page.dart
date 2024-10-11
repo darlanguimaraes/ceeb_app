@@ -4,6 +4,7 @@ import 'package:ceeb_app/app/modules/category/list/cubit/category_list_cubit.dar
 import 'package:ceeb_app/app/modules/category/list/cubit/category_list_state.dart';
 import 'package:ceeb_app/app/modules/category/widgets/category_list_card.dart';
 import 'package:ceeb_app/app/core/ui/widgets/ceeb_app_bar.dart';
+import 'package:ceeb_app/app/modules/category/widgets/modal_admin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,18 +17,48 @@ class CategoryListPage extends StatefulWidget {
 
 class _CategoryListPageState
     extends BaseState<CategoryListPage, CategoryListCubit> {
+  final _keyModal = GlobalKey();
+
   @override
   void onReady() {
     super.onReady();
     controller.list();
   }
 
+  Future<void> _showRestrictedModal() async {
+    final authorized = await showDialog(
+      context: context,
+      builder: (context) {
+        return Material(
+          color: Colors.black26,
+          child: Dialog(
+            key: _keyModal,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            backgroundColor: Colors.white,
+            elevation: 10,
+            child: const ModalAdmin(),
+          ),
+        );
+      },
+    );
+
+    if (authorized) {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushNamed(Constants.ROUTE_CATEGORY_FORM);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
+        if (_keyModal.currentContext != null) {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
         Navigator.of(context).pushNamedAndRemoveUntil(
           Constants.ROUTE_MENU,
           (Route<dynamic> route) => false,
@@ -77,8 +108,7 @@ class _CategoryListPageState
                           ),
                         ),
                         ElevatedButton.icon(
-                          onPressed: () => Navigator.of(context)
-                              .pushNamed(Constants.ROUTE_CATEGORY_FORM),
+                          onPressed: _showRestrictedModal,
                           label: const Text('Novo'),
                           icon: const Icon(Icons.add),
                         ),
@@ -92,6 +122,7 @@ class _CategoryListPageState
                         final category = state.categories[index];
                         return CategoryListCard(
                           category: category,
+                          keyModal: _keyModal,
                         );
                       },
                     ),

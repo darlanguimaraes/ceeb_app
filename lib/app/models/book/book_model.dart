@@ -4,33 +4,34 @@ import 'dart:convert';
 class BookModel {
   int? id;
   String name;
+  String nameDiacritics;
   String author;
   String? writer;
   String code;
   bool borrow;
   bool sync;
   String? remoteId;
-  String? nameDiacritics;
   BookModel({
     this.id,
     required this.name,
+    required this.nameDiacritics,
     required this.author,
     this.writer,
     required this.code,
     required this.borrow,
     required this.sync,
     this.remoteId,
-    this.nameDiacritics,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'name': name,
+      'name_diacritics': nameDiacritics,
       'author': author,
       'writer': writer,
       'code': code,
-      'borrow': borrow,
+      'borrow': borrow ? 1 : 0,
       'remote_id': remoteId,
     };
   }
@@ -39,8 +40,9 @@ class BookModel {
     return BookModel(
       id: map['id'] != null ? map['id'] as int : null,
       name: map['name'] as String,
-      author: map['author'] as String,
+      nameDiacritics: map['name_diacritics'] as String,
       writer: map['writer'] != null ? map['writer'] as String : null,
+      author: map['author'] as String,
       code: map['code'] as String,
       borrow: (map['borrow'] as int) == 0 ? false : true,
       sync: map['sync'] == 1,

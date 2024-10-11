@@ -23,8 +23,8 @@ class Constants {
   static const ROUTE_INVOICE_LIST = '/invoice/list';
   static const ROUTE_INVOICE_FORM = '/invoice/form';
 
-  static const ROUTE_LEADING_LIST = '/leading/list';
-  static const ROUTE_LEADING_FORM = '/leading/form';
+  static const ROUTE_LENDING_LIST = '/lending/list';
+  static const ROUTE_LENDING_FORM = '/lending/form';
 
   static const ROUTE_NOTE_LIST = '/note/list';
   static const ROUTE_NOTE_FORM = '/note/form';
@@ -34,7 +34,8 @@ class Constants {
   static const TABLE_CATEGORY = 'categories';
   static const TABLE_BOOK = 'books';
   static const TABLE_INVOICE = 'invoices';
-  static const TABLE_LEADING = 'leadings';
+  static const TABLE_LENDING = 'lendings';
   static const TABLE_NOTES = 'notes';
   static const TABLE_READER = 'readers';
+  static const TABLE_CONFIGURATION = 'configurations';
 }

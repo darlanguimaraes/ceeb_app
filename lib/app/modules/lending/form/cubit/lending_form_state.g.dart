@@ -1,36 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'leading_list_state.dart';
+part of 'lending_form_state.dart';
 
 // **************************************************************************
 // MatchExtensionGenerator
 // **************************************************************************
 
-extension LeadingListStatusMatch on LeadingListStatus {
+extension LendingFormStatusMatch on LendingFormStatus {
   T match<T>(
       {required T Function() initial,
       required T Function() loading,
       required T Function() loaded,
+      required T Function() success,
       required T Function() error}) {
     final v = this;
-    if (v == LeadingListStatus.initial) {
+    if (v == LendingFormStatus.initial) {
       return initial();
     }
 
-    if (v == LeadingListStatus.loading) {
+    if (v == LendingFormStatus.loading) {
       return loading();
     }
 
-    if (v == LeadingListStatus.loaded) {
+    if (v == LendingFormStatus.loaded) {
       return loaded();
     }
 
-    if (v == LeadingListStatus.error) {
+    if (v == LendingFormStatus.success) {
+      return success();
+    }
+
+    if (v == LendingFormStatus.error) {
       return error();
     }
 
     throw Exception(
-        'LeadingListStatus.match failed, found no match for: $this');
+        'LendingFormStatus.match failed, found no match for: $this');
   }
 
   T matchAny<T>(
@@ -38,21 +43,26 @@ extension LeadingListStatusMatch on LeadingListStatus {
       T Function()? initial,
       T Function()? loading,
       T Function()? loaded,
+      T Function()? success,
       T Function()? error}) {
     final v = this;
-    if (v == LeadingListStatus.initial && initial != null) {
+    if (v == LendingFormStatus.initial && initial != null) {
       return initial();
     }
 
-    if (v == LeadingListStatus.loading && loading != null) {
+    if (v == LendingFormStatus.loading && loading != null) {
       return loading();
     }
 
-    if (v == LeadingListStatus.loaded && loaded != null) {
+    if (v == LendingFormStatus.loaded && loaded != null) {
       return loaded();
     }
 
-    if (v == LeadingListStatus.error && error != null) {
+    if (v == LendingFormStatus.success && success != null) {
+      return success();
+    }
+
+    if (v == LendingFormStatus.error && error != null) {
       return error();
     }
 

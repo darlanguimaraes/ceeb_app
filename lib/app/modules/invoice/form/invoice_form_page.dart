@@ -6,7 +6,9 @@ import 'package:ceeb_app/app/core/ui/widgets/ceeb_field.dart';
 import 'package:ceeb_app/app/models/invoice/invoice_model.dart';
 import 'package:ceeb_app/app/modules/invoice/form/cubit/invoice_form_cubit.dart';
 import 'package:ceeb_app/app/modules/invoice/form/cubit/invoice_form_state.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:validatorless/validatorless.dart';
@@ -29,23 +31,33 @@ class _InvoiceFormPageState
   final categoryValid = ValueNotifier<bool>(true);
   String? _categorySelected;
   String? _paymentType;
-  bool _isMoney = true;
+
+  final _formatterPrice = CurrencyTextInputFormatter.currency(
+    locale: 'pt_BR',
+    symbol: 'R\$',
+    decimalDigits: 2,
+    turnOffGrouping: true,
+  );
 
   @override
-  void onReady() {
+  Future<void> onReady() async {
     super.onReady();
+    await controller.loadDependencies();
+    // ignore: use_build_context_synchronously
     final args = ModalRoute.of(context)!.settings.arguments;
     if (args != null) {
       final invoice = args as InvoiceModel;
+      _categorySelected = invoice.categoryId.toString();
+      controller.changeCategory(invoice.categoryId);
+
       _id = invoice.id;
       _dateEC.text = DateFormat('dd/MM/yyyy').format(invoice.date);
       _quantityEC.text = invoice.quantity.toString();
-      _totalEC.text = (invoice.quantity * invoice.price).toString();
-      _isMoney = invoice.paymentType == 'Dinheiro';
-      _categorySelected = invoice.categoryId.toString();
+      _totalEC.text = TextFormatter.formatReal(invoice.value);
       _paymentType = invoice.paymentType;
+
+      controller.setUpdateData(invoice);
     }
-    controller.loadDependencies();
     setState(() {});
   }
 
@@ -57,27 +69,36 @@ class _InvoiceFormPageState
 
   void _submit() {
     final valid = _formKey.currentState?.validate() ?? false;
-    final category =
-        controller.getCategorySelected(int.parse(_categorySelected!));
     if (valid) {
-      final quantity = int.tryParse(_quantityEC.text) ?? 1;
-      final value = quantity.toDouble(); //* category!.price;
+      final category = controller.state.category;
+      final quantity = category!.fixedQuantity ? 1 : controller.state.quantity;
+      final value = TextFormatter.unformatReal(_totalEC.text);
 
       final invoice = InvoiceModel(
         id: _id,
         date: DateFormat('dd/MM/yyyy').parse(_dateEC.text),
         quantity: quantity,
         value: value,
-        price: category!.price!,
+        price: category.fixedQuantity ? value : category.price!,
         credit: true,
-        paymentType: _isMoney ? 'Dinheiro' : 'PIX',
+        paymentType: _paymentType!,
         sync: false,
         categoryId: category.id!,
-        updatedAt: DateTime.now(),
       );
 
       controller.save(invoice);
     }
+  }
+
+  FormFieldValidator _validateTotalValue(String message) {
+    return (v) {
+      if (v.isNotEmpty) {
+        final value = TextFormatter.unformatReal(v);
+        if (value <= 0) return message;
+        return null;
+      }
+      return message;
+    };
   }
 
   @override
@@ -101,7 +122,7 @@ class _InvoiceFormPageState
       },
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
           Navigator.of(context).pushNamedAndRemoveUntil(
               Constants.ROUTE_INVOICE_LIST, (Route<dynamic> route) => false);
@@ -137,7 +158,7 @@ class _InvoiceFormPageState
                         final pickedDate = await showDatePicker(
                           context: context,
                           firstDate: DateTime(2020),
-                          lastDate: DateTime(2100),
+                          lastDate: DateTime.now(),
                         );
                         if (pickedDate != null) {
                           _dateEC.text =
@@ -174,44 +195,53 @@ class _InvoiceFormPageState
                               .toList(),
                           onChanged: (value) {
                             _categorySelected = value;
-                            final quantity = _quantityEC.text;
-                            if (quantity.isNotEmpty &&
-                                _categorySelected != null) {
-                              final category = controller.getCategorySelected(
-                                  int.parse(_categorySelected!));
-                              final total =
-                                  int.parse(quantity) * category!.price!;
-                              setState(() {
-                                _totalEC.text = TextFormatter.formatReal(total);
-                              });
-                            }
+                            controller.changeCategory(int.parse(value!));
                           },
                         );
                       },
                     ),
-                    const SizedBox(height: 20),
-                    CeebField(
-                      label: 'Quantidade',
-                      controller: _quantityEC,
-                      keyboardType: TextInputType.number,
-                      validator:
-                          Validatorless.required('Quantidade é obrigatório'),
-                      onChanged: (value) {
-                        if (value.isNotEmpty && _categorySelected != null) {
-                          final category = controller.getCategorySelected(
-                              int.parse(_categorySelected!));
-                          final total = int.parse(value) * category!.price!;
-                          setState(() {
-                            _totalEC.text = TextFormatter.formatReal(total);
-                          });
-                        }
+                    BlocConsumer<InvoiceFormCubit, InvoiceFormState>(
+                      listener: (context, state) {
+                        _quantityEC.text = state.quantity.toString();
+                      },
+                      builder: (context, state) {
+                        if (!state.showQuantity) return const SizedBox.shrink();
+                        return Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            CeebField(
+                              label: 'Quantidade',
+                              controller: _quantityEC,
+                              keyboardType: TextInputType.number,
+                              validator: Validatorless.required(
+                                  'Quantidade é obrigatório'),
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  controller.changeQuantity(int.parse(value));
+                                } else {
+                                  controller.changeQuantity(0);
+                                }
+                              },
+                            ),
+                          ],
+                        );
                       },
                     ),
                     const SizedBox(height: 20),
-                    CeebField(
-                      label: 'Total',
-                      enabled: false,
-                      controller: _totalEC,
+                    BlocConsumer<InvoiceFormCubit, InvoiceFormState>(
+                      listener: (context, state) {
+                        _totalEC.text = TextFormatter.formatReal(state.total);
+                      },
+                      builder: (context, state) {
+                        return CeebField(
+                          label: 'Total',
+                          enabled: controller.state.disableTotal,
+                          controller: _totalEC,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [_formatterPrice],
+                          validator: _validateTotalValue('Valor é obrigatório'),
+                        );
+                      },
                     ),
                     const SizedBox(height: 20),
                     BlocBuilder<InvoiceFormCubit, InvoiceFormState>(

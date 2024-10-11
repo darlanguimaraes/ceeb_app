@@ -17,19 +17,18 @@ class BookRepositoryImpl implements BookRepository {
 
     var where = '';
     if (filter != null) {
+      final strFilter = StringUtils.removeDiacritics(filter).toLowerCase();
       where =
-          ' where lower(name)="%${filter.toLowerCase()}%" or lower(author)="%${filter.toLowerCase()}%" or lower(code)="%${filter.toLowerCase()}%"';
+          ' where name_diacritics="%$strFilter%" or lower(author)="%$strFilter%" or lower(code)="%$filter%"';
     }
-    final results =
-        await conn.rawQuery('select * from ${Constants.TABLE_BOOK} $where');
+    final results = await conn.rawQuery(
+        'select * from ${Constants.TABLE_BOOK} $where order by name_diacritics asc');
     final List<BookModel> books = results.map(
       (e) {
         final book = BookModel.fromMap(e);
-        book.nameDiacritics = StringUtils.removeDiacritics(book.name);
         return book;
       },
     ).toList();
-    books.sort((a, b) => a.nameDiacritics!.compareTo(b.nameDiacritics!));
     return books;
   }
 
@@ -44,12 +43,26 @@ class BookRepositoryImpl implements BookRepository {
     final conn = await _sqliteConnectionFactory.openConnection();
 
     final map = book.toMap();
-    map.remove('created_at');
     await conn.update(
       Constants.TABLE_BOOK,
       map,
       where: 'id=?',
       whereArgs: [book.id],
+    );
+  }
+
+  @override
+  Future<void> borrowBook(int id, bool borrow) async {
+    final conn = await _sqliteConnectionFactory.openConnection();
+    final map = {
+      "borrow": borrow ? 1 : 0,
+      "sync": 0,
+    };
+    await conn.update(
+      Constants.TABLE_BOOK,
+      map,
+      where: 'id=?',
+      whereArgs: [id],
     );
   }
 }

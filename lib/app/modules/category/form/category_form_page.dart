@@ -68,6 +68,7 @@ class _CategoryFormPageState
         sync: false,
         fixedQuantity: controller.state.fixedQuantity,
         fixedPrice: controller.state.fixedPrice,
+        quantity: controller.state.fixedQuantity ? 1 : null,
       );
       controller.save(category);
     }

@@ -1,4 +1,5 @@
 import 'package:ceeb_app/app/core/helpers/constants.dart';
+import 'package:ceeb_app/app/core/helpers/string_utils.dart';
 import 'package:ceeb_app/app/core/ui/base_state/base_state.dart';
 import 'package:ceeb_app/app/core/ui/widgets/ceeb_app_bar.dart';
 import 'package:ceeb_app/app/core/ui/widgets/ceeb_field.dart';
@@ -59,11 +60,12 @@ class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
     if (valid) {
       final reader = ReaderModel(
         id: _id,
-        name: _nameEC.text,
-        phone: _phoneEC.text,
-        address: _addressEC.text,
-        city: _cityEC.text,
-        email: _emailEC.text,
+        name: _nameEC.text.trim(),
+        nameDiacritics: StringUtils.removeDiacritics(_nameEC.text.trim()),
+        phone: _phoneEC.text.trim(),
+        address: _addressEC.text.trim(),
+        city: _cityEC.text.trim(),
+        email: _emailEC.text.trim(),
         sync: false,
         openLoan: _openLoan ?? false,
       );

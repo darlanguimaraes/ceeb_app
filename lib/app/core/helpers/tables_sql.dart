@@ -22,6 +22,7 @@ class TablesSql {
     CREATE TABLE ${Constants.TABLE_BOOK} (
       id INTEGER primary key autoincrement,
       name text NOT NULL,
+      name_diacritics text not null,
       author text,
       writer text,
       code text NOT NULL,
@@ -46,6 +47,7 @@ class TablesSql {
     CREATE TABLE ${Constants.TABLE_READER} (
       id INTEGER primary key autoincrement,
       name text NOT NULL,
+      name_diacritics text not null,
       phone text NOT NULL,
       address text,
       city text,
@@ -72,8 +74,8 @@ class TablesSql {
     );
     ''';
 
-  static const LEADING = '''
-    CREATE TABLE ${Constants.TABLE_LEADING} (
+  static const LENDING = '''
+    CREATE TABLE ${Constants.TABLE_LENDING} (
       id INTEGER primary key autoincrement,
       book_id text NOT NULL,
       reader_id text NOT NULL,
@@ -86,5 +88,16 @@ class TablesSql {
       FOREIGN KEY(book_id) REFERENCES ${Constants.TABLE_BOOK} (id),
       FOREIGN KEY(reader_id) REFERENCES ${Constants.TABLE_READER} (id)
     );
+    ''';
+
+  static const CONFIGURATION = '''
+    CREATE TABLE ${Constants.TABLE_CONFIGURATION} (
+      id INTEGER primary key autoincrement,
+      sync_date int not null
+    );
+    ''';
+
+  static const INSERT_DEFAULT_CONFIGURATION = '''
+    insert into ${Constants.TABLE_CONFIGURATION} (sync_date) values (946692000000);
     ''';
 }

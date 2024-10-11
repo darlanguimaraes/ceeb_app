@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   MenuButton(
                     title: 'Empréstimos de Livros',
-                    route: Constants.ROUTE_LEADING_LIST,
+                    route: Constants.ROUTE_LENDING_LIST,
                     iconData: Icons.library_books,
                   ),
                   SizedBox(width: 10),

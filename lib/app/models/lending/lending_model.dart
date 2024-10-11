@@ -2,7 +2,7 @@ import 'dart:convert';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-class LeadingModel {
+class LendingModel {
   int? id;
   int bookId;
   String? bookName;
@@ -15,7 +15,7 @@ class LeadingModel {
   bool returned;
   bool sync;
   String? remoteId;
-  LeadingModel({
+  LendingModel({
     this.id,
     required this.bookId,
     this.bookName,
@@ -43,8 +43,8 @@ class LeadingModel {
     };
   }
 
-  factory LeadingModel.fromMap(Map<String, dynamic> map) {
-    return LeadingModel(
+  factory LendingModel.fromMap(Map<String, dynamic> map) {
+    return LendingModel(
       id: map['id'] != null ? map['id'] as int : null,
       bookId: map['book_id'] as int,
       bookName: map['book_name'] != null ? map['book_name'] as String : null,
@@ -65,6 +65,6 @@ class LeadingModel {
 
   String toJson() => json.encode(toMap());
 
-  factory LeadingModel.fromJson(String source) =>
-      LeadingModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory LendingModel.fromJson(String source) =>
+      LendingModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

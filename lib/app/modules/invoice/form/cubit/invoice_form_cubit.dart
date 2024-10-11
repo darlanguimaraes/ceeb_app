@@ -19,7 +19,11 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
   Future<void> save(InvoiceModel invoice) async {
     try {
       emit(state.copyWith(status: InvoiceFormStatus.loading));
-      await _invoiceService.save(invoice);
+      if (invoice.id != null) {
+        await _invoiceService.update(invoice);
+      } else {
+        await _invoiceService.save(invoice);
+      }
       emit(state.copyWith(status: InvoiceFormStatus.success));
     } catch (e, s) {
       log('Erro ao salvar os dados', error: e, stackTrace: s);
@@ -42,8 +46,61 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
   }
 
   CategoryModel? getCategorySelected(int id) {
-    return state.categories.firstWhere(
+    final category = state.categories.firstWhere(
       (element) => element.id == id,
     );
+
+    return category;
+  }
+
+  void changeCategory(int id) {
+    emit(state.copyWith(status: InvoiceFormStatus.loading));
+    final index = state.categories.indexWhere(
+      (element) => element.id == id,
+    );
+
+    if (index >= 0) {
+      final category = state.categories[index];
+
+      emit(state.copyWith(
+        status: InvoiceFormStatus.changed,
+        category: category,
+        showQuantity: category.fixedPrice,
+        disableTotal: category.fixedQuantity,
+        quantity: 0,
+        total: 0,
+      ));
+    } else {
+      emit(state.copyWith(
+        status: InvoiceFormStatus.changed,
+        category: null,
+        showQuantity: false,
+        disableTotal: false,
+        quantity: 0,
+        total: 0,
+      ));
+    }
+  }
+
+  void changeQuantity(int quantity) {
+    emit(state.copyWith(status: InvoiceFormStatus.loading));
+    double totalValue = 0;
+    if (quantity > 0) {
+      totalValue = quantity * state.category!.price!;
+    }
+    emit(state.copyWith(
+      status: InvoiceFormStatus.changed,
+      total: totalValue,
+      quantity: quantity,
+    ));
+  }
+
+  void setUpdateData(InvoiceModel invoice) {
+    emit(state.copyWith(status: InvoiceFormStatus.loading));
+    emit(state.copyWith(
+      status: InvoiceFormStatus.changed,
+      quantity: invoice.quantity,
+      total: invoice.value,
+    ));
   }
 }

@@ -1,3 +1,3 @@
 abstract interface class SynchronizeRepository {
-  Future<void> synchronize();
+  Future<String> login(String email, String password);
 }

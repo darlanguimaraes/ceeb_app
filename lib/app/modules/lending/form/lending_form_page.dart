@@ -5,23 +5,23 @@ import 'package:ceeb_app/app/core/ui/widgets/ceeb_app_bar.dart';
 import 'package:ceeb_app/app/models/book/book_model.dart';
 import 'package:ceeb_app/app/models/lending/lending_model.dart';
 import 'package:ceeb_app/app/models/reader/reader_model.dart';
-import 'package:ceeb_app/app/modules/leading/form/cubit/leading_form_cubit.dart';
-import 'package:ceeb_app/app/modules/leading/form/cubit/leading_form_state.dart';
+import 'package:ceeb_app/app/modules/lending/form/cubit/lending_form_cubit.dart';
+import 'package:ceeb_app/app/modules/lending/form/cubit/lending_form_state.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:validatorless/validatorless.dart';
 
-class LeadingFormPage extends StatefulWidget {
-  const LeadingFormPage({super.key});
+class LendingFormPage extends StatefulWidget {
+  const LendingFormPage({super.key});
 
   @override
-  State<LeadingFormPage> createState() => _LeadingFormPageState();
+  State<LendingFormPage> createState() => _LendingFormPageState();
 }
 
-class _LeadingFormPageState
-    extends BaseState<LeadingFormPage, LeadingFormCubit> {
+class _LendingFormPageState
+    extends BaseState<LendingFormPage, LendingFormCubit> {
   final _formKey = GlobalKey<FormState>();
   final _dateEC = TextEditingController();
   int? _id;
@@ -46,7 +46,7 @@ class _LeadingFormPageState
       } else {
         final date = DateFormat('dd/MM/yyyy').parse(_dateEC.text);
 
-        final leading = LeadingModel(
+        final lending = LendingModel(
           id: _id,
           bookId: _book!.id!,
           readerId: _reader!.id!,
@@ -56,7 +56,7 @@ class _LeadingFormPageState
           sync: false,
         );
 
-        controller.save(leading);
+        controller.save(lending);
       }
     }
   }
@@ -75,7 +75,7 @@ class _LeadingFormPageState
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LeadingFormCubit, LeadingFormState>(
+    return BlocListener<LendingFormCubit, LendingFormState>(
       listener: (context, state) {
         state.status.matchAny(
           any: () => hideLoader(),
@@ -84,7 +84,7 @@ class _LeadingFormPageState
             hideLoader();
             showSuccess('Dados registrados com sucesso');
             Navigator.of(context).pushNamedAndRemoveUntil(
-                Constants.ROUTE_LEADING_LIST, (Route<dynamic> route) => false);
+                Constants.ROUTE_LENDING_LIST, (Route<dynamic> route) => false);
           },
           error: () {
             hideLoader();
@@ -94,10 +94,10 @@ class _LeadingFormPageState
       },
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
           Navigator.of(context).pushNamedAndRemoveUntil(
-              Constants.ROUTE_LEADING_LIST, (Route<dynamic> route) => false);
+              Constants.ROUTE_LENDING_LIST, (Route<dynamic> route) => false);
         },
         child: Scaffold(
           appBar: CeebAppBar(
@@ -141,7 +141,7 @@ class _LeadingFormPageState
                       },
                     ),
                     const SizedBox(height: 20),
-                    BlocBuilder<LeadingFormCubit, LeadingFormState>(
+                    BlocBuilder<LendingFormCubit, LendingFormState>(
                       builder: (context, state) {
                         return DropdownSearch<ReaderModel>(
                           popupProps: PopupProps.menu(
@@ -205,7 +205,7 @@ class _LeadingFormPageState
                       },
                     ),
                     const SizedBox(height: 20),
-                    BlocBuilder<LeadingFormCubit, LeadingFormState>(
+                    BlocBuilder<LendingFormCubit, LendingFormState>(
                       builder: (context, state) {
                         return DropdownSearch<BookModel>(
                           popupProps: PopupProps.menu(
@@ -262,7 +262,7 @@ class _LeadingFormPageState
                         TextButton(
                           onPressed: () => Navigator.of(context)
                               .pushNamedAndRemoveUntil(
-                                  Constants.ROUTE_LEADING_LIST,
+                                  Constants.ROUTE_LENDING_LIST,
                                   (Route<dynamic> route) => false),
                           child: const Text('Cancelar'),
                         ),

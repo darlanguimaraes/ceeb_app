@@ -25,7 +25,7 @@ class _NoteListPageState extends BaseState<NoteListPage, NoteListCubit> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         Navigator.of(context).pushNamedAndRemoveUntil(
           Constants.ROUTE_MENU,

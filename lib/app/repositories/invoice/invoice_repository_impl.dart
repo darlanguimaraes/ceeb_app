@@ -37,15 +37,12 @@ class InvoiceRepositoryImpl implements InvoiceRepository {
   @override
   Future<void> save(InvoiceModel invoice) async {
     final conn = await _sqliteConnectionFactory.openConnection();
-    invoice.createdAt = DateTime.now();
-    invoice.updatedAt = DateTime.now();
     await conn.insert(Constants.TABLE_INVOICE, invoice.toMap());
   }
 
   @override
   Future<void> update(InvoiceModel invoice) async {
     final conn = await _sqliteConnectionFactory.openConnection();
-    invoice.updatedAt = DateTime.now();
     final map = invoice.toMap();
     map.remove('created_at');
     await conn.update(

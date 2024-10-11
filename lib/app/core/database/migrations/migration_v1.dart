@@ -10,7 +10,9 @@ class MigrationV1 implements Migration {
     batch.execute(TablesSql.NOTES);
     batch.execute(TablesSql.READER);
     batch.execute(TablesSql.INVOICE);
-    batch.execute(TablesSql.LEADING);
+    batch.execute(TablesSql.LENDING);
+    batch.execute(TablesSql.CONFIGURATION);
+    batch.execute(TablesSql.INSERT_DEFAULT_CONFIGURATION);
   }
 
   @override
