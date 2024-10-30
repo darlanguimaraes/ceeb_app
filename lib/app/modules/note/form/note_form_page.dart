@@ -78,7 +78,7 @@ class _NoteFormPageState extends BaseState<NoteFormPage, NoteFormCubit> {
       },
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
           Navigator.of(context).pushNamedAndRemoveUntil(
               Constants.ROUTE_NOTE_LIST, (Route<dynamic> route) => false);

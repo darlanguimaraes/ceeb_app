@@ -26,6 +26,7 @@ class _BookFormPageState extends BaseState<BookFormPage, BookFormCubit> {
   final _codeEC = TextEditingController();
 
   int? _id;
+  String? _remoteId;
   bool _borrow = false;
 
   @override
@@ -41,6 +42,7 @@ class _BookFormPageState extends BaseState<BookFormPage, BookFormCubit> {
       _writerEC.text = book.writer ?? '';
       _codeEC.text = book.code;
       _borrow = book.borrow;
+      _remoteId = book.remoteId;
     }
   }
 
@@ -65,6 +67,7 @@ class _BookFormPageState extends BaseState<BookFormPage, BookFormCubit> {
         code: _codeEC.text.trim(),
         borrow: _borrow,
         sync: false,
+        remoteId: _remoteId,
       );
       controller.save(book);
     }

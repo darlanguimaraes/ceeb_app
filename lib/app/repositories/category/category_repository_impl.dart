@@ -4,6 +4,7 @@ import 'package:ceeb_app/app/core/helpers/constants.dart';
 import 'package:ceeb_app/app/core/helpers/string_utils.dart';
 import 'package:ceeb_app/app/core/rest_client/dio/dio_rest_client.dart';
 import 'package:ceeb_app/app/models/category/category_model.dart';
+import 'package:ceeb_app/app/models/sync/category_sync_model.dart';
 import 'package:ceeb_app/app/models/sync/sync_model.dart';
 
 import './category_repository.dart';
@@ -92,25 +93,79 @@ class CategoryRepositoryImpl implements CategoryRepository {
     if (results.isNotEmpty) {
       final List<CategoryModel> categories =
           results.map((e) => CategoryModel.fromMap(e)).toList();
-      await _dio.post(
+      final response = await _dio.post(
         '${const String.fromEnvironment('backend_url')}sync/categories',
         data: categories.map((e) => e.toJson()).toList(),
         headers: {
+          'content-type': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
+      final data = response.data["data"];
+      final List<CategorySyncModel> registers = [];
+      for (final register in data) {
+        registers.add(CategorySyncModel.fromMap(register));
+      }
+      if (registers.isNotEmpty) {
+        for (final register in registers) {
+          final data = {
+            "sync": 1,
+            "remote_id": register.id,
+          };
+          await conn.update(
+            Constants.TABLE_CATEGORY,
+            data,
+            where: "id=?",
+            whereArgs: [register.mobileId],
+          );
+        }
+      }
     }
   }
 
   @override
   Future<SyncModel> receiveData(String token, DateTime date) async {
+    final conn = await _sqliteConnectionFactory.openConnection();
     final results = await _dio.get(
       '${const String.fromEnvironment('backend_url')}sync/categories?date=${date.toIso8601String()}',
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
-    final categories = results.data['data'];
+    final data = results.data['data'];
+    for (final register in data) {
+      final categorySync = CategorySyncModel.fromMap(register);
+      final categoryRemote = await conn.query(
+        Constants.TABLE_CATEGORY,
+        where: 'remote_id=?',
+        whereArgs: [categorySync.id],
+      );
+      final category = CategoryModel(
+        id: categorySync.mobileId,
+        name: categorySync.name,
+        sync: true,
+        fixedQuantity: categorySync.fixedQuantity,
+        fixedPrice: categorySync.fixedPrice,
+        price: categorySync.price,
+        quantity: categorySync.quantity,
+        remoteId: categorySync.id,
+        nameDiacritics:
+            StringUtils.removeDiacritics(categorySync.name).toLowerCase(),
+      );
+      if (categoryRemote.isEmpty) {
+        await conn.insert(
+          Constants.TABLE_CATEGORY,
+          category.toMap(),
+        );
+      } else {
+        await conn.update(
+          Constants.TABLE_CATEGORY,
+          category.toMap(),
+          where: 'id=?',
+          whereArgs: [categorySync.mobileId],
+        );
+      }
+    }
     return SyncModel(created: 1, updated: 1);
   }
 }

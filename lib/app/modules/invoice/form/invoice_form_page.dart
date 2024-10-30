@@ -8,7 +8,6 @@ import 'package:ceeb_app/app/modules/invoice/form/cubit/invoice_form_cubit.dart'
 import 'package:ceeb_app/app/modules/invoice/form/cubit/invoice_form_state.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:validatorless/validatorless.dart';
@@ -24,6 +23,7 @@ class _InvoiceFormPageState
     extends BaseState<InvoiceFormPage, InvoiceFormCubit> {
   final _formKey = GlobalKey<FormState>();
   int? _id;
+  String? _remoteId;
   final _dateEC = TextEditingController();
   final _quantityEC = TextEditingController();
   final _totalEC = TextEditingController();
@@ -55,6 +55,7 @@ class _InvoiceFormPageState
       _quantityEC.text = invoice.quantity.toString();
       _totalEC.text = TextFormatter.formatReal(invoice.value);
       _paymentType = invoice.paymentType;
+      _remoteId = invoice.remoteId;
 
       controller.setUpdateData(invoice);
     }
@@ -84,6 +85,7 @@ class _InvoiceFormPageState
         paymentType: _paymentType!,
         sync: false,
         categoryId: category.id!,
+        remoteId: _remoteId,
       );
 
       controller.save(invoice);

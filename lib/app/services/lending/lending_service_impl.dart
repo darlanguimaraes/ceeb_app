@@ -47,4 +47,10 @@ class LendingServiceImpl implements LendingService {
     await _readerRepository.borrowBook(lending.readerId, false);
     await _bookRepository.borrowBook(lending.bookId, false);
   }
+
+  @override
+  Future<void> synchronize(String token, DateTime date) async {
+    await _lendingRepository.sendData(token);
+    await _lendingRepository.receiveData(token, date);
+  }
 }

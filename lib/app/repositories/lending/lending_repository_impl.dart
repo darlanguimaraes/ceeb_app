@@ -1,15 +1,22 @@
 import 'package:ceeb_app/app/core/database/sqlite_connection_factory.dart';
 import 'package:ceeb_app/app/core/helpers/constants.dart';
+import 'package:ceeb_app/app/core/rest_client/dio/dio_rest_client.dart';
 import 'package:ceeb_app/app/models/lending/lending_model.dart';
+import 'package:ceeb_app/app/models/sync/lending_sync_model.dart';
+import 'package:ceeb_app/app/models/sync/sync_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 import 'lending_repository.dart';
 
 class LendingRepositoryImpl implements LendingRepository {
   final SqliteConnectionFactory _sqliteConnectionFactory;
+  final DioRestClient _dio;
 
-  LendingRepositoryImpl(
-      {required SqliteConnectionFactory sqliteConnectionFactory})
-      : _sqliteConnectionFactory = sqliteConnectionFactory;
+  LendingRepositoryImpl({
+    required SqliteConnectionFactory sqliteConnectionFactory,
+    required DioRestClient dio,
+  })  : _sqliteConnectionFactory = sqliteConnectionFactory,
+        _dio = dio;
 
   @override
   Future<List<LendingModel>> list(String? filter, bool? returned) async {
@@ -102,5 +109,113 @@ class LendingRepositoryImpl implements LendingRepository {
       where: 'id=?',
       whereArgs: [id],
     );
+  }
+
+  @override
+  Future<void> sendData(String token) async {
+    final conn = await _sqliteConnectionFactory.openConnection();
+    final results = await conn.query(
+      Constants.TABLE_LENDING,
+      where: 'sync=?',
+      whereArgs: [0],
+    );
+    if (results.isNotEmpty) {
+      final List<LendingModel> books =
+          results.map((e) => LendingModel.fromMap(e)).toList();
+      final response = await _dio.post(
+        '${const String.fromEnvironment('backend_url')}sync/lendings',
+        data: books.map((e) => e.toJson()).toList(),
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      final data = response.data["data"];
+      final List<LendingSyncModel> registers = [];
+      for (final register in data) {
+        registers.add(LendingSyncModel.fromMap(register));
+      }
+      if (registers.isNotEmpty) {
+        for (final register in registers) {
+          final data = {
+            "sync": 1,
+            "remote_id": register.id,
+          };
+          await conn.update(
+            Constants.TABLE_LENDING,
+            data,
+            where: "id=?",
+            whereArgs: [register.mobileId],
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  Future<SyncModel> receiveData(String token, DateTime date) async {
+    final conn = await _sqliteConnectionFactory.openConnection();
+    final results = await _dio.get(
+      '${const String.fromEnvironment('backend_url')}sync/lendings?date=${date.toIso8601String()}',
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    final data = results.data['data'];
+    for (final register in data) {
+      final lendingSync = LendingSyncModel.fromMap(register);
+      final lendingRemote = await conn.query(
+        Constants.TABLE_LENDING,
+        where: 'remote_id=?',
+        whereArgs: [lendingSync.id],
+      );
+      final readerId = await findByRemoteId(
+        conn,
+        lendingSync.readerId,
+        Constants.TABLE_READER,
+      );
+      final bookId =
+          await findByRemoteId(conn, lendingSync.bookId, Constants.TABLE_BOOK);
+
+      final book = LendingModel(
+        id: lendingSync.mobileId,
+        sync: true,
+        bookId: bookId,
+        readerId: readerId,
+        remoteId: lendingSync.id,
+        date: lendingSync.date,
+        expectedDate: lendingSync.expectedDate,
+        deliveryDate: lendingSync.deliveryDate,
+        returned: lendingSync.returned,
+      );
+      if (lendingRemote.isEmpty) {
+        await conn.insert(
+          Constants.TABLE_LENDING,
+          book.toMap(),
+        );
+      } else {
+        await conn.update(
+          Constants.TABLE_LENDING,
+          book.toMap(),
+          where: 'id=?',
+          whereArgs: [lendingSync.mobileId],
+        );
+      }
+    }
+    return SyncModel(created: 1, updated: 1);
+  }
+
+  Future<int> findByRemoteId(Database conn, String id, String table) async {
+    final reader = await conn.query(
+      table,
+      columns: ['id'],
+      where: 'remote_id=?',
+      whereArgs: [id],
+    );
+    if (reader.isNotEmpty) {
+      final data = reader[0];
+      return data["id"] as int;
+    }
+    return 0;
   }
 }

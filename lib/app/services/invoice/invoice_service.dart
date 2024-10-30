@@ -4,4 +4,5 @@ abstract interface class InvoiceService {
   Future<void> save(InvoiceModel invoice);
   Future<void> update(InvoiceModel invoice);
   Future<List<InvoiceModel>> list();
+  Future<void> synchronize(String token, DateTime date);
 }

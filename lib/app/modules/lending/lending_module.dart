@@ -23,16 +23,20 @@ class LendingModule extends CeebModule {
       : super(
           bindings: [
             Provider<BookRepository>(
-              create: (context) =>
-                  BookRepositoryImpl(sqliteConnectionFactory: context.read()),
+              create: (context) => BookRepositoryImpl(
+                sqliteConnectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<BookService>(
               create: (context) =>
                   BookServiceImpl(bookRepository: context.read()),
             ),
             Provider<ReaderRepository>(
-              create: (context) =>
-                  ReaderRepositoryImpl(connectionFactory: context.read()),
+              create: (context) => ReaderRepositoryImpl(
+                connectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<ReaderService>(
               create: (context) =>
@@ -40,7 +44,9 @@ class LendingModule extends CeebModule {
             ),
             Provider<LendingRepository>(
               create: (context) => LendingRepositoryImpl(
-                  sqliteConnectionFactory: context.read()),
+                sqliteConnectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<LendingService>(
               create: (context) => LendingServiceImpl(
@@ -50,16 +56,20 @@ class LendingModule extends CeebModule {
               ),
             ),
             Provider<ReaderRepository>(
-              create: (context) =>
-                  ReaderRepositoryImpl(connectionFactory: context.read()),
+              create: (context) => ReaderRepositoryImpl(
+                connectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<ReaderService>(
               create: (context) =>
                   ReaderServiceImpl(readerRepository: context.read()),
             ),
             Provider<BookRepository>(
-              create: (context) =>
-                  BookRepositoryImpl(sqliteConnectionFactory: context.read()),
+              create: (context) => BookRepositoryImpl(
+                sqliteConnectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<BookService>(
               create: (context) =>

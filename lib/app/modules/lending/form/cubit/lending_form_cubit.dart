@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:ceeb_app/app/models/book/book_model.dart';
 import 'package:ceeb_app/app/models/lending/lending_model.dart';
+import 'package:ceeb_app/app/models/reader/reader_model.dart';
 import 'package:ceeb_app/app/modules/lending/form/cubit/lending_form_state.dart';
 import 'package:ceeb_app/app/services/book/book_service.dart';
 import 'package:ceeb_app/app/services/lending/lending_service.dart';
@@ -47,5 +49,13 @@ class LendingFormCubit extends Cubit<LendingFormState> {
       log('Não foi possível buscar os dados', error: e, stackTrace: s);
       emit(state.copyWith(status: LendingFormStatus.error));
     }
+  }
+
+  Future<ReaderModel> getReader(int id) async {
+    return await _readerService.get(id);
+  }
+
+  Future<BookModel> getBook(int id) async {
+    return await _bookService.get(id);
   }
 }

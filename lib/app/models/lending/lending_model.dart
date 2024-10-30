@@ -38,7 +38,8 @@ class LendingModel {
       'date': date.millisecondsSinceEpoch,
       'expected_date': expectedDate.millisecondsSinceEpoch,
       'delivery_date': deliveryDate?.millisecondsSinceEpoch,
-      'returned': returned,
+      'returned': returned ? 1 : 0,
+      'sync': sync ? 1 : 0,
       'remote_id': remoteId,
     };
   }

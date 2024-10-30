@@ -23,4 +23,15 @@ class ReaderServiceImpl implements ReaderService {
   Future<void> update(ReaderModel reader) async {
     await _readerRepository.update(reader);
   }
+
+  @override
+  Future<ReaderModel> get(int id) async {
+    return await _readerRepository.get(id);
+  }
+
+  @override
+  Future<void> synchronize(String token, DateTime date) async {
+    await _readerRepository.sendData(token);
+    await _readerRepository.receiveData(token, date);
+  }
 }

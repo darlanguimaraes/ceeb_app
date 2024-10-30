@@ -25,13 +25,28 @@ class _LendingFormPageState
   final _formKey = GlobalKey<FormState>();
   final _dateEC = TextEditingController();
   int? _id;
+  String? _remoteId;
   ReaderModel? _reader;
   BookModel? _book;
 
   @override
-  void onReady() {
+  Future<void> onReady() async {
     super.onReady();
     controller.loadDependencies();
+
+    final args = ModalRoute.of(context)!.settings.arguments;
+    if (args != null) {
+      final lending = args as LendingModel;
+
+      final book = await controller.getBook(lending.bookId);
+      final reader = await controller.getReader(lending.readerId);
+
+      _id = lending.id;
+      _book = book;
+      _reader = reader;
+      _dateEC.text = DateFormat('dd/MM/yyyy').format(lending.date);
+      _remoteId = lending.remoteId;
+    }
   }
 
   void _submit() {
@@ -54,6 +69,7 @@ class _LendingFormPageState
           expectedDate: date.add(const Duration(days: 30)),
           returned: false,
           sync: false,
+          remoteId: _remoteId,
         );
 
         controller.save(lending);
@@ -180,6 +196,7 @@ class _LendingFormPageState
                           onChanged: (ReaderModel? data) => setState(() {
                             _reader = data;
                           }),
+                          selectedItem: _reader,
                           dropdownDecoratorProps: DropDownDecoratorProps(
                             dropdownSearchDecoration: InputDecoration(
                               labelText: "Leitor",
@@ -234,6 +251,7 @@ class _LendingFormPageState
                           onChanged: (BookModel? data) => setState(() {
                             _book = data;
                           }),
+                          selectedItem: _book,
                           dropdownDecoratorProps: DropDownDecoratorProps(
                             dropdownSearchDecoration: InputDecoration(
                               labelText: "Livro",

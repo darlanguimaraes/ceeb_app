@@ -20,7 +20,9 @@ class InvoiceModule extends CeebModule {
           bindings: [
             Provider<InvoiceRepository>(
               create: (context) => InvoiceRepositoryImpl(
-                  sqliteConnectionFactory: context.read()),
+                sqliteConnectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<InvoiceService>(
               create: (context) =>

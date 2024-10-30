@@ -40,77 +40,81 @@ class _LendingModalState extends State<LendingModal> {
 
     final styleText = context.textStyles.textMedium.copyWith(fontSize: 18);
 
-    return Container(
-      width: context.screenWidth * .8,
-      height: context.screenHeight * .5,
-      padding: const EdgeInsets.all(20),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: Text(
-                '$title de Livro',
-                style: context.textStyles.textBold.copyWith(fontSize: 25),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const Divider(),
-            Text(
-              'Livro: ${lending.bookName} (${lending.bookCode})',
-              style: styleText,
-            ),
-            const SizedBox(height: 15),
-            Text(
-              'Leitor: ${widget.lending.readerName}',
-              style: styleText,
-            ),
-            const SizedBox(height: 15),
-            Text(
-              'Data de empréstimo: ${DateFormat('dd/MM/yyyy').format(lending.date)}',
-              style: styleText,
-            ),
-            Text(
-              'Previsão de entrega: ${DateFormat('dd/MM/yyyy').format(lending.expectedDate)}',
-              style: styleText,
-            ),
-            if (daysPenalty > 0)
-              Column(
-                children: [
-                  const SizedBox(height: 15),
-                  Text(
-                    'Multa: $daysPenalty dias',
-                    style: context.textStyles.textBold.copyWith(
-                      color: Colors.red,
-                      fontSize: 18,
-                    ),
-                  ),
-                ],
-              ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: context.screenWidth * .8,
+          padding: const EdgeInsets.all(20),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancelar'),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    '$title de Livro',
+                    style: context.textStyles.textBold.copyWith(fontSize: 25),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                if (widget.renew)
-                  ElevatedButton(
-                    onPressed: () => widget.renewLending(lending.id!),
-                    child: const Text('Renovar'),
+                const Divider(),
+                Text(
+                  'Livro: ${lending.bookName} (${lending.bookCode})',
+                  style: styleText,
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  'Leitor: ${widget.lending.readerName}',
+                  style: styleText,
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  'Data de empréstimo: ${DateFormat('dd/MM/yyyy').format(lending.date)}',
+                  style: styleText,
+                ),
+                Text(
+                  'Previsão de entrega: ${DateFormat('dd/MM/yyyy').format(lending.expectedDate)}',
+                  style: styleText,
+                ),
+                if (daysPenalty > 0)
+                  Column(
+                    children: [
+                      const SizedBox(height: 15),
+                      Text(
+                        'Multa: $daysPenalty dias',
+                        style: context.textStyles.textBold.copyWith(
+                          color: Colors.red,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
                   ),
-                if (!widget.renew)
-                  ElevatedButton(
-                    onPressed: () => widget.returnLending(lending.id!),
-                    child: const Text('Devolver'),
-                  ),
+                const Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancelar'),
+                    ),
+                    if (widget.renew)
+                      ElevatedButton(
+                        onPressed: () => widget.renewLending(lending.id!),
+                        child: const Text('Renovar'),
+                      ),
+                    if (!widget.renew)
+                      ElevatedButton(
+                        onPressed: () => widget.returnLending(lending.id!),
+                        child: const Text('Devolver'),
+                      ),
+                  ],
+                ),
               ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

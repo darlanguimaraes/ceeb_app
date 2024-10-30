@@ -1,5 +1,4 @@
 import 'package:ceeb_app/app/models/category/category_model.dart';
-import 'package:ceeb_app/app/models/sync/sync_model.dart';
 import 'package:ceeb_app/app/repositories/category/category_repository.dart';
 
 import './category_service.dart';
@@ -25,8 +24,8 @@ class CategoryServiceImpl implements CategoryService {
   }
 
   @override
-  Future<SyncModel> synchronize(String token, DateTime date) async {
+  Future<void> synchronize(String token, DateTime date) async {
     await _categoryRepository.sendData(token);
-    return await _categoryRepository.receiveData(token, date);
+    await _categoryRepository.receiveData(token, date);
   }
 }

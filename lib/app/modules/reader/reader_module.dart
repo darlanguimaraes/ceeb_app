@@ -15,8 +15,10 @@ class ReaderModule extends CeebModule {
       : super(
           bindings: [
             Provider<ReaderRepository>(
-              create: (context) =>
-                  ReaderRepositoryImpl(connectionFactory: context.read()),
+              create: (context) => ReaderRepositoryImpl(
+                connectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<ReaderService>(
               create: (context) =>

@@ -28,7 +28,6 @@ class NoteListCard extends StatelessWidget {
             ),
             title: Text(
               note.description,
-              overflow: TextOverflow.ellipsis,
             ),
             subtitle: Text(DateFormat('dd/MM/yyyy').format(note.date)),
             leading: note.complete

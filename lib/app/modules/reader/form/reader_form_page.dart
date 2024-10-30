@@ -21,6 +21,7 @@ class ReaderFormPage extends StatefulWidget {
 class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
   final _formKey = GlobalKey<FormState>();
   int? _id;
+  String? _remoteId;
   bool? _openLoan;
   final _nameEC = TextEditingController();
   final _phoneEC = TextEditingController();
@@ -42,6 +43,7 @@ class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
       _addressEC.text = reader.address ?? '';
       _cityEC.text = reader.city ?? '';
       _emailEC.text = reader.email ?? '';
+      _remoteId = reader.remoteId;
     }
   }
 
@@ -68,6 +70,7 @@ class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
         email: _emailEC.text.trim(),
         sync: false,
         openLoan: _openLoan ?? false,
+        remoteId: _remoteId,
       );
       controller.save(reader);
     }

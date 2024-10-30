@@ -34,7 +34,8 @@ class ReaderModel {
       'address': address,
       'city': city,
       'email': email,
-      'open_loan': openLoan,
+      'open_loan': openLoan ? 1 : 0,
+      'sync': sync ? 1 : 0,
       'remote_id': remoteId,
     };
   }

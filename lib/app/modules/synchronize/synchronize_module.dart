@@ -57,16 +57,20 @@ class SynchronizeModule extends CeebModule {
               create: (context) => CategoryServiceImpl(context.read()),
             ),
             Provider<BookRepository>(
-              create: (context) =>
-                  BookRepositoryImpl(sqliteConnectionFactory: context.read()),
+              create: (context) => BookRepositoryImpl(
+                sqliteConnectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<BookService>(
               create: (context) =>
                   BookServiceImpl(bookRepository: context.read()),
             ),
             Provider<ReaderRepository>(
-              create: (context) =>
-                  ReaderRepositoryImpl(connectionFactory: context.read()),
+              create: (context) => ReaderRepositoryImpl(
+                connectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<ReaderService>(
               create: (context) =>
@@ -74,7 +78,9 @@ class SynchronizeModule extends CeebModule {
             ),
             Provider<InvoiceRepository>(
               create: (context) => InvoiceRepositoryImpl(
-                  sqliteConnectionFactory: context.read()),
+                sqliteConnectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<InvoiceService>(
               create: (context) =>
@@ -82,7 +88,9 @@ class SynchronizeModule extends CeebModule {
             ),
             Provider<LendingRepository>(
               create: (context) => LendingRepositoryImpl(
-                  sqliteConnectionFactory: context.read()),
+                sqliteConnectionFactory: context.read(),
+                dio: context.read(),
+              ),
             ),
             Provider<LendingService>(
               create: (context) => LendingServiceImpl(

@@ -30,6 +30,7 @@ class _CategoryFormPageState
     turnOffGrouping: true,
   );
   int? _id;
+  String? _remoteId;
 
   @override
   void onReady() {
@@ -40,6 +41,7 @@ class _CategoryFormPageState
     if (args != null) {
       final category = args as CategoryModel;
       _id = category.id;
+      _remoteId = category.remoteId;
       _nameEC.text = category.name;
       _priceEC.text = TextFormatter.formatReal(category.price!);
       _formatterPrice.formatEditUpdate(
@@ -69,6 +71,7 @@ class _CategoryFormPageState
         fixedQuantity: controller.state.fixedQuantity,
         fixedPrice: controller.state.fixedPrice,
         quantity: controller.state.fixedQuantity ? 1 : null,
+        remoteId: _remoteId,
       );
       controller.save(category);
     }

@@ -41,17 +41,22 @@ class SynchronizeServiceImpl implements SynchronizeService {
       final token = await _synchronizeRepository.login(email, password);
 
       if (token.isNotEmpty) {
-        final actualDate = DateTime.now();
         final configuration = await _configurationService.get();
 
-        final categories =
-            await _categoryService.synchronize(token, configuration.syncDate);
+        final actualDate = DateTime.now();
+
+        await _categoryService.synchronize(token, configuration.syncDate);
+        await _bookService.synchronize(token, configuration.syncDate);
+        await _readerService.synchronize(token, configuration.syncDate);
+        await _invoiceService.synchronize(token, configuration.syncDate);
+        await _lendingService.synchronize(token, configuration.syncDate);
 
         configuration.syncDate = actualDate;
         await _configurationService.update(configuration);
       }
     } catch (e, s) {
       log('Erro ao sincronizar', error: e, stackTrace: s);
+      rethrow;
     }
   }
 }

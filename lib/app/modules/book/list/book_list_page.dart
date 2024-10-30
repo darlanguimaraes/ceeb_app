@@ -102,7 +102,10 @@ class _BookListPageState extends BaseState<BookListPage, BookListCubit> {
                             SizedBox(
                               height: 50,
                               width: context.percentWidth(0.6),
-                              child: CeebField(label: 'Filtro'),
+                              child: CeebField(
+                                label: 'Filtro',
+                                controller: _filterEC,
+                              ),
                             ),
                             const SizedBox(width: 10),
                             TextButton(

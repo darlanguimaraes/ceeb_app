@@ -1,4 +1,5 @@
 import 'package:ceeb_app/app/models/lending/lending_model.dart';
+import 'package:ceeb_app/app/models/sync/sync_model.dart';
 
 abstract interface class LendingRepository {
   Future<void> save(LendingModel lending);
@@ -7,4 +8,6 @@ abstract interface class LendingRepository {
   Future<List<LendingModel>> list(String? filter, bool? returned);
   Future<void> renewLending(int id, DateTime expectedDate);
   Future<void> returnLending(int id);
+  Future<void> sendData(String token);
+  Future<SyncModel> receiveData(String token, DateTime date);
 }

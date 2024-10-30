@@ -13,7 +13,7 @@ class SynchronizeCubit extends Cubit<SynchronizeState> {
   Future<void> sync(String email, String password) async {
     try {
       emit(state.copyWith(status: SynchronizeStatus.loading));
-      final token = await _synchronizeService.synchronize(email, password);
+      await _synchronizeService.synchronize(email, password);
       emit(state.copyWith(status: SynchronizeStatus.success));
     } catch (e, s) {
       log('Erro oa sincronizar os dados', error: e, stackTrace: s);

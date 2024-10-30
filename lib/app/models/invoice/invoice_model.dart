@@ -35,9 +35,10 @@ class InvoiceModel {
       'quantity': quantity,
       'price': price,
       'value': value,
-      'credit': credit,
+      'credit': credit ? 1 : 0,
       'payment_type': paymentType,
       'category_id': categoryId,
+      'sync': sync ? 1 : 0,
       'remote_id': remoteId,
     };
   }

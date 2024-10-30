@@ -24,8 +24,14 @@ class BookListCard extends StatelessWidget {
             book.name,
             style: context.textStyles.textBold.copyWith(fontSize: 20),
           ),
-          subtitle: Text(
-            book.code,
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(book.author),
+              Text(
+                book.code,
+              ),
+            ],
           ),
           leading: book.borrow
               ? const Icon(

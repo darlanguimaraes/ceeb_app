@@ -32,6 +32,7 @@ class BookModel {
       'writer': writer,
       'code': code,
       'borrow': borrow ? 1 : 0,
+      'sync': sync ? 1 : 0,
       'remote_id': remoteId,
     };
   }

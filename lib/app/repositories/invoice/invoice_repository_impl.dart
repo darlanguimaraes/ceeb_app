@@ -1,15 +1,22 @@
 import 'package:ceeb_app/app/core/database/sqlite_connection_factory.dart';
 import 'package:ceeb_app/app/core/helpers/constants.dart';
+import 'package:ceeb_app/app/core/rest_client/dio/dio_rest_client.dart';
 import 'package:ceeb_app/app/models/invoice/invoice_model.dart';
+import 'package:ceeb_app/app/models/sync/invoice_sync_model.dart';
+import 'package:ceeb_app/app/models/sync/sync_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 import './invoice_repository.dart';
 
 class InvoiceRepositoryImpl implements InvoiceRepository {
   final SqliteConnectionFactory _sqliteConnectionFactory;
+  final DioRestClient _dio;
 
-  InvoiceRepositoryImpl(
-      {required SqliteConnectionFactory sqliteConnectionFactory})
-      : _sqliteConnectionFactory = sqliteConnectionFactory;
+  InvoiceRepositoryImpl({
+    required SqliteConnectionFactory sqliteConnectionFactory,
+    required DioRestClient dio,
+  })  : _sqliteConnectionFactory = sqliteConnectionFactory,
+        _dio = dio;
 
   @override
   Future<List<InvoiceModel>> list() async {
@@ -51,5 +58,112 @@ class InvoiceRepositoryImpl implements InvoiceRepository {
       where: 'id=?',
       whereArgs: [invoice.id],
     );
+  }
+
+  @override
+  Future<void> sendData(String token) async {
+    final conn = await _sqliteConnectionFactory.openConnection();
+    final results = await conn.query(
+      Constants.TABLE_INVOICE,
+      where: 'sync=?',
+      whereArgs: [0],
+    );
+    if (results.isNotEmpty) {
+      final List<InvoiceModel> books =
+          results.map((e) => InvoiceModel.fromMap(e)).toList();
+      final response = await _dio.post(
+        '${const String.fromEnvironment('backend_url')}sync/invoices',
+        data: books.map((e) => e.toJson()).toList(),
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      final data = response.data["data"];
+      final List<InvoiceSyncModel> registers = [];
+      for (final register in data) {
+        registers.add(InvoiceSyncModel.fromMap(register));
+      }
+      if (registers.isNotEmpty) {
+        for (final register in registers) {
+          final data = {
+            "sync": 1,
+            "remote_id": register.id,
+          };
+          await conn.update(
+            Constants.TABLE_INVOICE,
+            data,
+            where: "id=?",
+            whereArgs: [register.mobileId],
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  Future<SyncModel> receiveData(String token, DateTime date) async {
+    final conn = await _sqliteConnectionFactory.openConnection();
+    final results = await _dio.get(
+      '${const String.fromEnvironment('backend_url')}sync/invoices?date=${date.toIso8601String()}',
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    final data = results.data['data'];
+    for (final register in data) {
+      final invoiceSync = InvoiceSyncModel.fromMap(register);
+      final invoiceRemote = await conn.query(
+        Constants.TABLE_INVOICE,
+        where: 'remote_id=?',
+        whereArgs: [invoiceSync.id],
+      );
+      final categoryId = await findByRemoteId(
+        conn,
+        invoiceSync.categoryId,
+        Constants.TABLE_CATEGORY,
+      );
+
+      final invoice = InvoiceModel(
+        id: invoiceSync.mobileId,
+        categoryId: categoryId,
+        credit: invoiceSync.credit,
+        date: invoiceSync.date,
+        paymentType: invoiceSync.paymentType,
+        price: invoiceSync.price.toDouble(),
+        quantity: invoiceSync.quantity,
+        value: invoiceSync.value.toDouble(),
+        sync: true,
+        remoteId: invoiceSync.id,
+      );
+      if (invoiceRemote.isEmpty) {
+        await conn.insert(
+          Constants.TABLE_INVOICE,
+          invoice.toMap(),
+        );
+      } else {
+        await conn.update(
+          Constants.TABLE_INVOICE,
+          invoice.toMap(),
+          where: 'id=?',
+          whereArgs: [invoiceSync.mobileId],
+        );
+      }
+    }
+    return SyncModel(created: 1, updated: 1);
+  }
+
+  Future<int> findByRemoteId(Database conn, String id, String table) async {
+    final reader = await conn.query(
+      table,
+      columns: ['id'],
+      where: 'remote_id=?',
+      whereArgs: [id],
+    );
+    if (reader.isNotEmpty) {
+      final data = reader[0];
+      return data["id"] as int;
+    }
+    return 0;
   }
 }
