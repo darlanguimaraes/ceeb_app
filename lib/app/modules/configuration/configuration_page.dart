@@ -115,7 +115,9 @@ class _ConfigurationPageState
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
+                              onPressed: () => Navigator.of(context)
+                                  .pushNamedAndRemoveUntil(Constants.ROUTE_MENU,
+                                      (Route<dynamic> route) => false),
                               child: const Text('Cancelar'),
                             ),
                             ElevatedButton(

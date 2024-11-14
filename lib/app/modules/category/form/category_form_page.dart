@@ -43,7 +43,9 @@ class _CategoryFormPageState
       _id = category.id;
       _remoteId = category.remoteId;
       _nameEC.text = category.name;
-      _priceEC.text = TextFormatter.formatReal(category.price!);
+      _priceEC.text = category.price != null
+          ? TextFormatter.formatReal(category.price!)
+          : '';
       _formatterPrice.formatEditUpdate(
           TextEditingValue.empty, TextEditingValue(text: _priceEC.text));
       controller.changeQuantityFixed(category.fixedQuantity);
