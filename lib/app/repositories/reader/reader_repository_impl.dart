@@ -76,7 +76,7 @@ class ReaderRepositoryImpl implements ReaderRepository {
   }
 
   @override
-  Future<void> sendData(String token) async {
+  Future<void> sendData(String url, String token) async {
     final conn = await _connectionFactory.openConnection();
     final results = await conn.query(
       Constants.TABLE_READER,
@@ -87,7 +87,7 @@ class ReaderRepositoryImpl implements ReaderRepository {
       final List<ReaderModel> books =
           results.map((e) => ReaderModel.fromMap(e)).toList();
       final response = await _dio.post(
-        '${const String.fromEnvironment('backend_url')}sync/readers',
+        '${url}sync/readers',
         data: books.map((e) => e.toJson()).toList(),
         headers: {
           'content-type': 'application/json',
@@ -117,10 +117,10 @@ class ReaderRepositoryImpl implements ReaderRepository {
   }
 
   @override
-  Future<SyncModel> receiveData(String token, DateTime date) async {
+  Future<SyncModel> receiveData(String url, String token, DateTime date) async {
     final conn = await _connectionFactory.openConnection();
     final results = await _dio.get(
-      '${const String.fromEnvironment('backend_url')}sync/readers?date=${date.toIso8601String()}',
+      '${url}sync/readers?date=${date.toIso8601String()}',
       headers: {
         'Authorization': 'Bearer $token',
       },

@@ -63,7 +63,8 @@ class _ReaderFormPageState extends BaseState<ReaderFormPage, ReaderFormCubit> {
       final reader = ReaderModel(
         id: _id,
         name: _nameEC.text.trim(),
-        nameDiacritics: StringUtils.removeDiacritics(_nameEC.text.trim()),
+        nameDiacritics:
+            StringUtils.removeDiacritics(_nameEC.text.trim()).toLowerCase(),
         phone: _phoneEC.text.trim(),
         address: _addressEC.text.trim(),
         city: _cityEC.text.trim(),

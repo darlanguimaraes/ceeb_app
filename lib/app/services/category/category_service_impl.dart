@@ -24,8 +24,8 @@ class CategoryServiceImpl implements CategoryService {
   }
 
   @override
-  Future<void> synchronize(String token, DateTime date) async {
-    await _categoryRepository.sendData(token);
-    await _categoryRepository.receiveData(token, date);
+  Future<void> synchronize(String url, String token, DateTime date) async {
+    await _categoryRepository.sendData(url, token);
+    await _categoryRepository.receiveData(url, token, date);
   }
 }

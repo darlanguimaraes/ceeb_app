@@ -85,56 +85,61 @@ class _NoteFormPageState extends BaseState<NoteFormPage, NoteFormCubit> {
         },
         child: Scaffold(
           appBar: CeebAppBar(title: 'Anotação'),
-          body: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  CeebField(
-                    label: 'Data',
-                    controller: _dateEC,
-                    enabled: false,
-                  ),
-                  const SizedBox(height: 20),
-                  CeebField(
-                    label: 'Texto',
-                    controller: _textEC,
-                    validator: Validatorless.required('Texto é obrigatório'),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Checkbox(
-                        activeColor: context.primaryColor,
-                        value: _complete,
-                        onChanged: (value) {
-                          setState(() {
-                            _complete = value!;
-                          });
-                        },
-                      ),
-                      const Text('Completo'),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context)
-                            .pushNamedAndRemoveUntil(Constants.ROUTE_NOTE_LIST,
-                                (Route<dynamic> route) => false),
-                        child: const Text('Cancelar'),
-                      ),
-                      ElevatedButton(
-                        onPressed: _submit,
-                        child: const Text('Salvar'),
-                      ),
-                    ],
-                  ),
-                ],
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    CeebField(
+                      label: 'Data',
+                      controller: _dateEC,
+                      enabled: false,
+                    ),
+                    const SizedBox(height: 20),
+                    CeebField(
+                      label: 'Texto',
+                      controller: _textEC,
+                      validator: Validatorless.required('Texto é obrigatório'),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 8,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Checkbox(
+                          activeColor: context.primaryColor,
+                          value: _complete,
+                          onChanged: (value) {
+                            setState(() {
+                              _complete = value!;
+                            });
+                          },
+                        ),
+                        const Text('Completo'),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context)
+                              .pushNamedAndRemoveUntil(
+                                  Constants.ROUTE_NOTE_LIST,
+                                  (Route<dynamic> route) => false),
+                          child: const Text('Cancelar'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _submit,
+                          child: const Text('Salvar'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

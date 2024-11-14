@@ -61,19 +61,17 @@ class InvoiceRepositoryImpl implements InvoiceRepository {
   }
 
   @override
-  Future<void> sendData(String token) async {
+  Future<void> sendData(String url, String token) async {
     final conn = await _sqliteConnectionFactory.openConnection();
-    final results = await conn.query(
-      Constants.TABLE_INVOICE,
-      where: 'sync=?',
-      whereArgs: [0],
-    );
+    final results = await conn.rawQuery(
+        '''select i.id, i.date, i.quantity, i.price, i.value, i.credit, i.payment_type, i.remote_id, c.remote_id as category_id
+     from ${Constants.TABLE_INVOICE} i
+     join ${Constants.TABLE_CATEGORY} c on c.id=i.category_id
+     where i.sync=0''');
     if (results.isNotEmpty) {
-      final List<InvoiceModel> books =
-          results.map((e) => InvoiceModel.fromMap(e)).toList();
       final response = await _dio.post(
-        '${const String.fromEnvironment('backend_url')}sync/invoices',
-        data: books.map((e) => e.toJson()).toList(),
+        '${url}sync/invoices',
+        data: results.toList(),
         headers: {
           'content-type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -102,10 +100,10 @@ class InvoiceRepositoryImpl implements InvoiceRepository {
   }
 
   @override
-  Future<SyncModel> receiveData(String token, DateTime date) async {
+  Future<SyncModel> receiveData(String url, String token, DateTime date) async {
     final conn = await _sqliteConnectionFactory.openConnection();
     final results = await _dio.get(
-      '${const String.fromEnvironment('backend_url')}sync/invoices?date=${date.toIso8601String()}',
+      '${url}sync/invoices?date=${date.toIso8601String()}',
       headers: {
         'Authorization': 'Bearer $token',
       },

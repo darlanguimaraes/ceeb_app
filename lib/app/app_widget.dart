@@ -1,5 +1,6 @@
 import 'package:ceeb_app/app/modules/book/book_module.dart';
 import 'package:ceeb_app/app/modules/category/category_module.dart';
+import 'package:ceeb_app/app/modules/configuration/configuration_module.dart';
 import 'package:ceeb_app/app/modules/home/home_module.dart';
 import 'package:ceeb_app/app/modules/home/home_page.dart';
 import 'package:ceeb_app/app/core/ui/ui_config.dart';
@@ -52,6 +53,7 @@ class _AppWidgetState extends State<AppWidget> {
         ...LendingModule().routers,
         ...NoteModule().routers,
         ...SynchronizeModule().routers,
+        ...ConfigurationModule().routers,
       },
       home: const HomePage(),
     );

@@ -65,6 +65,22 @@ class _SynchronizePageState
               key: _formKey,
               child: Column(
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton.icon(
+                        label: const Text('Voltar'),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                          Constants.ROUTE_MENU,
+                          (Route<dynamic> route) => false,
+                        ),
+                        icon: const Icon(
+                          Icons.home,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   CeebField(
                     label: 'Login',

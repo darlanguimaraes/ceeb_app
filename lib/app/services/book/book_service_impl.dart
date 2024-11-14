@@ -30,8 +30,8 @@ class BookServiceImpl implements BookService {
   }
 
   @override
-  Future<void> synchronize(String token, DateTime date) async {
-    await _bookRepository.sendData(token);
-    await _bookRepository.receiveData(token, date);
+  Future<void> synchronize(String url, String token, DateTime date) async {
+    await _bookRepository.sendData(url, token);
+    await _bookRepository.receiveData(url, token, date);
   }
 }

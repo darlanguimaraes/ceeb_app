@@ -86,7 +86,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   @override
-  Future<void> sendData(String token) async {
+  Future<void> sendData(String url, String token) async {
     final conn = await _sqliteConnectionFactory.openConnection();
     final results = await conn
         .query(Constants.TABLE_CATEGORY, where: 'sync=?', whereArgs: [0]);
@@ -94,7 +94,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
       final List<CategoryModel> categories =
           results.map((e) => CategoryModel.fromMap(e)).toList();
       final response = await _dio.post(
-        '${const String.fromEnvironment('backend_url')}sync/categories',
+        '${url}sync/categories',
         data: categories.map((e) => e.toJson()).toList(),
         headers: {
           'content-type': 'application/json',
@@ -124,10 +124,10 @@ class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   @override
-  Future<SyncModel> receiveData(String token, DateTime date) async {
+  Future<SyncModel> receiveData(String url, String token, DateTime date) async {
     final conn = await _sqliteConnectionFactory.openConnection();
     final results = await _dio.get(
-      '${const String.fromEnvironment('backend_url')}sync/categories?date=${date.toIso8601String()}',
+      '${url}sync/categories?date=${date.toIso8601String()}',
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -146,7 +146,7 @@ class CategoryRepositoryImpl implements CategoryRepository {
         sync: true,
         fixedQuantity: categorySync.fixedQuantity,
         fixedPrice: categorySync.fixedPrice,
-        price: categorySync.price,
+        price: categorySync.price?.toDouble(),
         quantity: categorySync.quantity,
         remoteId: categorySync.id,
         nameDiacritics:

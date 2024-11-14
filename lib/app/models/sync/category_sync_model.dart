@@ -4,7 +4,7 @@ import 'dart:convert';
 class CategorySyncModel {
   String id;
   String name;
-  double? price;
+  num? price;
   int? quantity;
   bool fixedQuantity;
   bool fixedPrice;
@@ -31,8 +31,8 @@ class CategorySyncModel {
       'quantity': quantity,
       'fixedQuantity': fixedQuantity,
       'fixedPrice': fixedPrice,
-      'createdAt': createdAt.millisecondsSinceEpoch,
-      'updatedAt': updatedAt.millisecondsSinceEpoch,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
       'mobileId': mobileId,
     };
   }
@@ -41,7 +41,7 @@ class CategorySyncModel {
     return CategorySyncModel(
       id: map['id'] as String,
       name: map['name'] as String,
-      price: map['price'] != null ? map['price'] as double : null,
+      price: map['price'] != null ? map['price'] as num : null,
       quantity: map['quantity'] != null ? map['quantity'] as int : null,
       fixedQuantity: map['fixedQuantity'] as bool,
       fixedPrice: map['fixedPrice'] as bool,

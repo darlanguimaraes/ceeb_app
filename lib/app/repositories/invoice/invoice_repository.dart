@@ -5,6 +5,6 @@ abstract interface class InvoiceRepository {
   Future<void> save(InvoiceModel invoice);
   Future<void> update(InvoiceModel invoice);
   Future<List<InvoiceModel>> list();
-  Future<void> sendData(String token);
-  Future<SyncModel> receiveData(String token, DateTime date);
+  Future<void> sendData(String url, String token);
+  Future<SyncModel> receiveData(String url, String token, DateTime date);
 }

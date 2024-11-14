@@ -7,6 +7,6 @@ abstract interface class ReaderRepository {
   Future<List<ReaderModel>> list(String? filter);
   Future<void> borrowBook(int id, bool borrow);
   Future<ReaderModel> get(int id);
-  Future<void> sendData(String token);
-  Future<SyncModel> receiveData(String token, DateTime date);
+  Future<void> sendData(String url, String token);
+  Future<SyncModel> receiveData(String url, String token, DateTime date);
 }

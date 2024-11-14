@@ -69,7 +69,7 @@ class TablesSql {
       payment_type text,
       sync INTEGER,
       remote_id text,
-      category_id text,
+      category_id INTEGER,
       FOREIGN KEY(category_id) REFERENCES ${Constants.TABLE_CATEGORY} (id)
     );
     ''';
@@ -77,8 +77,8 @@ class TablesSql {
   static const LENDING = '''
     CREATE TABLE ${Constants.TABLE_LENDING} (
       id INTEGER primary key autoincrement,
-      book_id text NOT NULL,
-      reader_id text NOT NULL,
+      book_id INTEGER NOT NULL,
+      reader_id INTEGER NOT NULL,
       date INTEGER NOT NULL,
       expected_date INTEGER NOT NULL,
       delivery_date INTEGER,
@@ -93,11 +93,12 @@ class TablesSql {
   static const CONFIGURATION = '''
     CREATE TABLE ${Constants.TABLE_CONFIGURATION} (
       id INTEGER primary key autoincrement,
-      sync_date int not null
+      sync_date int not null,
+      url text
     );
     ''';
 
   static const INSERT_DEFAULT_CONFIGURATION = '''
-    insert into ${Constants.TABLE_CONFIGURATION} (sync_date) values (946692000000);
+    insert into ${Constants.TABLE_CONFIGURATION} (sync_date, url) values (946692000000, 'https://ceeuripedesbarsanulpho.org.br/');
     ''';
 }

@@ -25,8 +25,8 @@ class InvoiceServiceImpl implements InvoiceService {
   }
 
   @override
-  Future<void> synchronize(String token, DateTime date) async {
-    await _invoiceRepository.sendData(token);
-    await _invoiceRepository.receiveData(token, date);
+  Future<void> synchronize(String url, String token, DateTime date) async {
+    await _invoiceRepository.sendData(url, token);
+    await _invoiceRepository.receiveData(url, token, date);
   }
 }

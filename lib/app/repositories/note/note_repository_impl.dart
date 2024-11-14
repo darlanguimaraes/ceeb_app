@@ -12,7 +12,7 @@ class NoteRepositoryImpl implements NoteRepository {
 
   @override
   Future<List<NoteModel>> list(bool? complete) async {
-    var where = '';
+    String where = '';
     if (complete != null) {
       where = ' where complete = ${complete ? '1' : '0'}';
     }

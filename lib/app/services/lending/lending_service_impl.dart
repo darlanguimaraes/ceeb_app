@@ -49,8 +49,8 @@ class LendingServiceImpl implements LendingService {
   }
 
   @override
-  Future<void> synchronize(String token, DateTime date) async {
-    await _lendingRepository.sendData(token);
-    await _lendingRepository.receiveData(token, date);
+  Future<void> synchronize(String url, String token, DateTime date) async {
+    await _lendingRepository.sendData(url, token);
+    await _lendingRepository.receiveData(url, token, date);
   }
 }

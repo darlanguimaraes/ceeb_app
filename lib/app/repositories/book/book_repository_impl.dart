@@ -86,7 +86,7 @@ class BookRepositoryImpl implements BookRepository {
   }
 
   @override
-  Future<void> sendData(String token) async {
+  Future<void> sendData(String url, String token) async {
     final conn = await _sqliteConnectionFactory.openConnection();
     final results = await conn.query(
       Constants.TABLE_BOOK,
@@ -97,7 +97,7 @@ class BookRepositoryImpl implements BookRepository {
       final List<BookModel> books =
           results.map((e) => BookModel.fromMap(e)).toList();
       final response = await _dio.post(
-        '${const String.fromEnvironment('backend_url')}sync/books',
+        '${url}sync/books',
         data: books.map((e) => e.toJson()).toList(),
         headers: {
           'content-type': 'application/json',
@@ -127,10 +127,10 @@ class BookRepositoryImpl implements BookRepository {
   }
 
   @override
-  Future<SyncModel> receiveData(String token, DateTime date) async {
+  Future<SyncModel> receiveData(String url, String token, DateTime date) async {
     final conn = await _sqliteConnectionFactory.openConnection();
     final results = await _dio.get(
-      '${const String.fromEnvironment('backend_url')}sync/books?date=${date.toIso8601String()}',
+      '${url}sync/books?date=${date.toIso8601String()}',
       headers: {
         'Authorization': 'Bearer $token',
       },

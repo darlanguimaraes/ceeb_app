@@ -4,5 +4,5 @@ abstract interface class CategoryService {
   Future<void> save(CategoryModel category);
   Future<void> update(CategoryModel category);
   Future<List<CategoryModel>> list(String? name);
-  Future<void> synchronize(String token, DateTime date);
+  Future<void> synchronize(String url, String token, DateTime date);
 }

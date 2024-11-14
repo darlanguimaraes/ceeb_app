@@ -38,24 +38,25 @@ class SynchronizeServiceImpl implements SynchronizeService {
   @override
   Future<void> synchronize(String email, String password) async {
     try {
-      final token = await _synchronizeRepository.login(email, password);
+      final configuration = await _configurationService.get();
+      final url =
+          configuration.url ?? const String.fromEnvironment('backend_url');
+      final token = await _synchronizeRepository.login(url, email, password);
 
       if (token.isNotEmpty) {
-        final configuration = await _configurationService.get();
-
         final actualDate = DateTime.now();
 
-        await _categoryService.synchronize(token, configuration.syncDate);
-        await _bookService.synchronize(token, configuration.syncDate);
-        await _readerService.synchronize(token, configuration.syncDate);
-        await _invoiceService.synchronize(token, configuration.syncDate);
-        await _lendingService.synchronize(token, configuration.syncDate);
+        await _categoryService.synchronize(url, token, configuration.syncDate);
+        await _bookService.synchronize(url, token, configuration.syncDate);
+        await _readerService.synchronize(url, token, configuration.syncDate);
+        await _invoiceService.synchronize(url, token, configuration.syncDate);
+        await _lendingService.synchronize(url, token, configuration.syncDate);
 
         configuration.syncDate = actualDate;
         await _configurationService.update(configuration);
       }
     } catch (e, s) {
-      log('Erro ao sincronizar', error: e, stackTrace: s);
+      log('Erro ao sincronizar ${e.toString()}', error: e, stackTrace: s);
       rethrow;
     }
   }

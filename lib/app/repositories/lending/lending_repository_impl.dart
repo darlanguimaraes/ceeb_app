@@ -112,19 +112,20 @@ class LendingRepositoryImpl implements LendingRepository {
   }
 
   @override
-  Future<void> sendData(String token) async {
+  Future<void> sendData(String url, String token) async {
     final conn = await _sqliteConnectionFactory.openConnection();
-    final results = await conn.query(
-      Constants.TABLE_LENDING,
-      where: 'sync=?',
-      whereArgs: [0],
-    );
+    final results = await conn.rawQuery(
+        '''select l.id, l.date, l.expected_date, l.delivery_date, l.returned, l.remote_id, l.sync,
+    b.remote_id as book_id, r.remote_id as reader_id
+    from ${Constants.TABLE_LENDING} l
+    join ${Constants.TABLE_BOOK} b on b.id=l.book_id
+    join ${Constants.TABLE_READER} r on r.id=l.reader_id
+    where l.sync=0''');
+
     if (results.isNotEmpty) {
-      final List<LendingModel> books =
-          results.map((e) => LendingModel.fromMap(e)).toList();
       final response = await _dio.post(
-        '${const String.fromEnvironment('backend_url')}sync/lendings',
-        data: books.map((e) => e.toJson()).toList(),
+        '${url}sync/lendings',
+        data: results.toList(),
         headers: {
           'content-type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -153,10 +154,10 @@ class LendingRepositoryImpl implements LendingRepository {
   }
 
   @override
-  Future<SyncModel> receiveData(String token, DateTime date) async {
+  Future<SyncModel> receiveData(String url, String token, DateTime date) async {
     final conn = await _sqliteConnectionFactory.openConnection();
     final results = await _dio.get(
-      '${const String.fromEnvironment('backend_url')}sync/lendings?date=${date.toIso8601String()}',
+      '${url}sync/lendings?date=${date.toIso8601String()}',
       headers: {
         'Authorization': 'Bearer $token',
       },

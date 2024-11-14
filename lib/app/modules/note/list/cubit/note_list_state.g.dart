@@ -11,6 +11,7 @@ extension NoteListStatusMatch on NoteListStatus {
       {required T Function() initial,
       required T Function() loading,
       required T Function() loaded,
+      required T Function() updated,
       required T Function() error}) {
     final v = this;
     if (v == NoteListStatus.initial) {
@@ -25,6 +26,10 @@ extension NoteListStatusMatch on NoteListStatus {
       return loaded();
     }
 
+    if (v == NoteListStatus.updated) {
+      return updated();
+    }
+
     if (v == NoteListStatus.error) {
       return error();
     }
@@ -37,6 +42,7 @@ extension NoteListStatusMatch on NoteListStatus {
       T Function()? initial,
       T Function()? loading,
       T Function()? loaded,
+      T Function()? updated,
       T Function()? error}) {
     final v = this;
     if (v == NoteListStatus.initial && initial != null) {
@@ -49,6 +55,10 @@ extension NoteListStatusMatch on NoteListStatus {
 
     if (v == NoteListStatus.loaded && loaded != null) {
       return loaded();
+    }
+
+    if (v == NoteListStatus.updated && updated != null) {
+      return updated();
     }
 
     if (v == NoteListStatus.error && error != null) {

@@ -6,5 +6,5 @@ abstract interface class LendingService {
   Future<List<LendingModel>> list(String? filter, bool? returned);
   Future<void> renewLending(int id, DateTime expectedDate);
   Future<void> returnLending(int id);
-  Future<void> synchronize(String token, DateTime date);
+  Future<void> synchronize(String url, String token, DateTime date);
 }

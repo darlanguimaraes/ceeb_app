@@ -134,7 +134,10 @@ class _BookFormPageState extends BaseState<BookFormPage, BookFormCubit> {
                     CeebField(
                       label: 'Código',
                       controller: _codeEC,
-                      validator: Validatorless.required('Código é obrigatório'),
+                      validator: Validatorless.multiple([
+                        Validatorless.required('Código é obrigatório'),
+                        Validatorless.min(13, 'Formato inválido'),
+                      ]),
                       inputFormatters: [codeMask],
                       capitalize: true,
                     ),

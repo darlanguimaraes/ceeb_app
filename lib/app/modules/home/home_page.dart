@@ -83,12 +83,18 @@ class _HomePageState extends State<HomePage> {
                 height: 10,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   MenuButton(
                     title: 'Sincronizar',
                     route: Constants.ROUTE_SYNC,
                     iconData: Icons.sync,
+                  ),
+                  SizedBox(width: 10),
+                  MenuButton(
+                    title: 'Configurações',
+                    route: Constants.ROUTE_CONFIG,
+                    iconData: Icons.settings,
                   ),
                 ],
               ),

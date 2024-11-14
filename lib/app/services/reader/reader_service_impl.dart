@@ -30,8 +30,8 @@ class ReaderServiceImpl implements ReaderService {
   }
 
   @override
-  Future<void> synchronize(String token, DateTime date) async {
-    await _readerRepository.sendData(token);
-    await _readerRepository.receiveData(token, date);
+  Future<void> synchronize(String url, String token, DateTime date) async {
+    await _readerRepository.sendData(url, token);
+    await _readerRepository.receiveData(url, token, date);
   }
 }

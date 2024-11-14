@@ -11,10 +11,10 @@ class SynchronizeRepositoryImpl implements SynchronizeRepository {
   SynchronizeRepositoryImpl({required DioRestClient dio}) : _dio = dio;
 
   @override
-  Future<String> login(String email, String password) async {
+  Future<String> login(String url, String email, String password) async {
     try {
       final response = await _dio.post(
-        '${const String.fromEnvironment('backend_url')}login',
+        '${url}login',
         data: {'email': email, 'password': password},
       );
       if (response.statusCode == 200) {

@@ -7,6 +7,6 @@ abstract interface class CategoryRepository {
   Future<List<CategoryModel>> list(String? name);
   Future<CategoryModel> get(int id);
   Future<void> delete(int id);
-  Future<void> sendData(String token);
-  Future<SyncModel> receiveData(String token, DateTime date);
+  Future<void> sendData(String url, String token);
+  Future<SyncModel> receiveData(String url, String token, DateTime date);
 }

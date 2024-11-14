@@ -106,7 +106,7 @@ class LendingListCard extends StatelessWidget {
                       'Previsão entrega: ${DateFormat('dd/MM/yyyy').format(lending.expectedDate)}'),
                   if (lending.deliveryDate != null)
                     Text(
-                        'Data de entrega: ${DateFormat('dd/MM/yyyy').format(lending.deliveryDate!)}'),
+                        'Data de entrega:  ${lending.deliveryDate != null ? DateFormat('dd/MM/yyyy').format(lending.deliveryDate!) : ''}'),
                   if (!lending.returned &&
                       lending.deliveryDate == null &&
                       penalty() > 0)

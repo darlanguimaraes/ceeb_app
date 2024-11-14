@@ -5,5 +5,5 @@ abstract interface class BookService {
   Future<void> update(BookModel book);
   Future<List<BookModel>> list(String? filter);
   Future<BookModel> get(int id);
-  Future<void> synchronize(String token, DateTime date);
+  Future<void> synchronize(String url, String token, DateTime date);
 }

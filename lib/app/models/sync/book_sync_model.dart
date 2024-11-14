@@ -34,8 +34,8 @@ class BookSyncModel {
       'code': code,
       'borrow': borrow,
       'edition': edition,
-      'createdAt': createdAt.millisecondsSinceEpoch,
-      'updatedAt': updatedAt.millisecondsSinceEpoch,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
       'mobileId': mobileId,
     };
   }

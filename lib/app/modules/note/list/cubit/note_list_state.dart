@@ -11,6 +11,7 @@ enum NoteListStatus {
   initial,
   loading,
   loaded,
+  updated,
   error,
 }
 

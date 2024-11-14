@@ -29,6 +29,8 @@ class Constants {
   static const ROUTE_NOTE_LIST = '/note/list';
   static const ROUTE_NOTE_FORM = '/note/form';
 
+  static const ROUTE_CONFIG = '/config';
+
   static const ROUTE_SYNC = '/sync';
 
   static const TABLE_CATEGORY = 'categories';

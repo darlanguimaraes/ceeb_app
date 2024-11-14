@@ -1,4 +1,5 @@
 import 'package:ceeb_app/app/core/helpers/constants.dart';
+import 'package:ceeb_app/app/core/helpers/text_styles.dart';
 import 'package:ceeb_app/app/core/ui/base_state/base_state.dart';
 import 'package:ceeb_app/app/core/ui/widgets/ceeb_app_bar.dart';
 import 'package:ceeb_app/app/modules/note/list/cubit/note_list_cubit.dart';
@@ -15,10 +16,12 @@ class NoteListPage extends StatefulWidget {
 }
 
 class _NoteListPageState extends BaseState<NoteListPage, NoteListCubit> {
+  bool _open = true;
+
   @override
   void onReady() {
     super.onReady();
-    controller.list(null);
+    controller.list(false);
   }
 
   @override
@@ -41,6 +44,10 @@ class _NoteListPageState extends BaseState<NoteListPage, NoteListCubit> {
             state.status.matchAny(
               any: () => hideLoader(),
               loading: () => showLoader(),
+              updated: () {
+                hideLoader();
+                showSuccess('Anotação atualizada com sucesso');
+              },
               error: () {
                 hideLoader();
                 showError('Erro ao buscar os dados');
@@ -59,27 +66,58 @@ class _NoteListPageState extends BaseState<NoteListPage, NoteListCubit> {
               child: CustomScrollView(
                 slivers: [
                   SliverAppBar(
-                    expandedHeight: 70,
+                    expandedHeight: 120,
+                    toolbarHeight: 120,
                     backgroundColor: Colors.white,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    title: Column(
                       children: [
-                        ElevatedButton.icon(
-                          label: const Text('Voltar'),
-                          onPressed: () =>
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                            Constants.ROUTE_MENU,
-                            (Route<dynamic> route) => false,
-                          ),
-                          icon: const Icon(
-                            Icons.home,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton.icon(
+                              label: const Text('Voltar'),
+                              onPressed: () =>
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                Constants.ROUTE_MENU,
+                                (Route<dynamic> route) => false,
+                              ),
+                              icon: const Icon(
+                                Icons.home,
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () => Navigator.of(context)
+                                  .pushNamed(Constants.ROUTE_NOTE_FORM),
+                              label: const Text('Novo'),
+                              icon: const Icon(Icons.add),
+                            ),
+                          ],
                         ),
-                        ElevatedButton.icon(
-                          onPressed: () => Navigator.of(context)
-                              .pushNamed(Constants.ROUTE_NOTE_FORM),
-                          label: const Text('Novo'),
-                          icon: const Icon(Icons.add),
+                        Row(
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'Em aberto',
+                                  style: context.textStyles.textMedium
+                                      .copyWith(fontSize: 14),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Switch(
+                                  value: _open,
+                                  activeColor: Colors.blue,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _open = value;
+                                      controller.list(!value);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -89,7 +127,11 @@ class _NoteListPageState extends BaseState<NoteListPage, NoteListCubit> {
                       childCount: state.notes.length,
                       (context, index) {
                         final note = state.notes[index];
-                        return NoteListCard(note: note);
+                        return NoteListCard(
+                          note: note,
+                          controller: controller,
+                          status: _open,
+                        );
                       },
                     ),
                   ),
